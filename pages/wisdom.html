@@ -154,6 +154,34 @@
       font-weight: 500;
     }
 
+    /* ── Wisdom Modal Footer ───────────────────────────────── */
+    .wisdom-modal-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 24px;
+    }
+
+    .wisdom-modal-footer #markReadBtn {
+      width: 100%;
+      justify-content: center;
+      font-size: 0.9rem;
+      padding: 12px 16px;
+    }
+
+    .wisdom-modal-nav-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .wisdom-modal-nav-row .btn {
+      justify-content: center;
+      padding: 10px 8px;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
     /* Reset notice */
     .reset-notice {
       display: flex;
@@ -472,11 +500,13 @@
     <div class="modal-body wisdom-modal-content" id="modalBody">
       Content here
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-mint btn-sm" id="markReadBtn">✅ Mark as Read</button>
-      <button class="btn btn-ghost btn-sm" id="prevSectionBtn" style="border: var(--border);">← Prev</button>
-      <button class="btn btn-ghost btn-sm" id="nextSectionBtn" style="border: var(--border);">Next →</button>
-      <button class="btn btn-ghost btn-sm" id="copyWisdomBtn" style="border: var(--border); margin-left: auto;">📋 Copy</button>
+    <div class="modal-footer wisdom-modal-footer">
+      <button class="btn btn-mint" id="markReadBtn">✅ Mark as Read</button>
+      <div class="wisdom-modal-nav-row">
+        <button class="btn btn-ghost btn-sm" id="prevSectionBtn" style="border: var(--border);">← Prev</button>
+        <button class="btn btn-ghost btn-sm" id="nextSectionBtn" style="border: var(--border);">Next →</button>
+        <button class="btn btn-ghost btn-sm" id="copyWisdomBtn" style="border: var(--border);">📋 Copy</button>
+      </div>
     </div>
   </div>
 </div>
