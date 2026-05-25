@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wisdom Vault — WRNS Work Edition</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <style>
+    /* Wisdom header panel */
+    .wisdom-hero {
+      background: var(--c-black);
+      color: var(--c-white);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: clamp(28px, 5vw, 52px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sh-xl);
+      margin-bottom: 32px;
+    }
+
+    .wisdom-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(112,0,255,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(255,229,0,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .wisdom-hero-content { position: relative; z-index: 1; }
+
+    .wisdom-hero-sub {
+      font-size: 0.95rem;
+      opacity: 0.6;
+      max-width: 600px;
+      line-height: 1.6;
+      margin: 12px 0 24px;
+    }
+
+    .wisdom-formula {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255,229,0,0.12);
+      border: 1.5px solid rgba(255,229,0,0.3);
+      border-radius: var(--radius-pill);
+      font-family: var(--f-display);
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-weight: 800;
+      color: var(--c-yellow);
+      flex-wrap: wrap;
+    }
+
+    /* Progress section */
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .progress-text {
+      font-family: var(--f-display);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    /* Tag filter */
+    .tag-section {
+      margin: 24px 0;
+    }
+
+    /* Shared tag chip */
+    .wic-num {
+      font-family: var(--f-display);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--c-cream);
+      box-shadow: 2px 2px 0 var(--c-black);
+    }
+
+    .wic-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 10px;
+      border: 1.5px solid var(--c-black);
+      border-radius: var(--radius-pill);
+      box-shadow: 2px 2px 0 var(--c-black);
+      margin-top: 4px;
+    }
+
+    /* Modal tag */
+    .wisdom-modal-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border: 1.5px solid var(--c-black);
+      border-radius: var(--radius-pill);
+      box-shadow: 2px 2px 0 var(--c-black);
+      margin-left: 8px;
+    }
+
+    .wisdom-modal-content {
+      white-space: pre-line;
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+
+    /* Intro summary cards */
+    .intro-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .intro-card {
+      padding: 18px;
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-white);
+      box-shadow: var(--sh-sm);
+    }
+
+    .intro-card-label {
+      font-family: var(--f-display);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.45;
+      margin-bottom: 8px;
+    }
+
+    .intro-card-val {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* Reset notice */
+    .reset-notice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border: var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--c-cream);
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Search */
+    .search-wrap { position: relative; }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 18px 12px 44px;
+      border: var(--border-thick);
+      border-radius: var(--radius-pill);
+      background: var(--c-white);
+      font-family: var(--f-body);
+      font-size: 0.95rem;
+      outline: none;
+      box-shadow: var(--sh-sm);
+      transition: box-shadow var(--t-fast), border-color var(--t-fast);
+    }
+
+    .search-input:focus {
+      box-shadow: var(--sh-md);
+      border-color: var(--c-purple);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .wisdom-count-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--f-display);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--c-cream);
+      box-shadow: var(--sh-sm);
+    }
+
+    /* ── Wisdom Carousel Card ─────────────────────────────── */
+    #wisdomCarousel .carousel-stage {
+      min-height: 520px;
+    }
+
+    .wisdom-carousel-card {
+      background: var(--c-white);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      box-shadow: var(--sh-md);
+      display: flex;
+      flex-direction: column;
+      height: clamp(460px, 62vh, 640px);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .wisdom-carousel-card:hover .wcc-header {
+      background: var(--c-cream);
+    }
+
+    .wisdom-carousel-card.read {
+      background: var(--c-cream);
+    }
+
+    .wcc-header {
+      padding: 22px 24px 16px;
+      border-bottom: var(--border);
+      flex-shrink: 0;
+      transition: background var(--t-fast);
+    }
+
+    .wcc-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .wcc-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .wcc-emoji { font-size: 2rem; }
+
+    .wcc-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .wcc-read-indicator {
+      display: none;
+      font-family: var(--f-display);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      background: var(--c-mint);
+      border: 1.5px solid var(--c-black);
+      border-radius: var(--radius-pill);
+      box-shadow: 2px 2px 0 var(--c-black);
+    }
+
+    .wisdom-carousel-card.read .wcc-read-indicator {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .wcc-title {
+      font-family: var(--f-display);
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .wcc-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      white-space: pre-line;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Subtle scrollbar */
+    .wcc-body::-webkit-scrollbar { width: 6px; }
+    .wcc-body::-webkit-scrollbar-track { background: transparent; }
+    .wcc-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+    .wcc-footer {
+      padding: 14px 24px;
+      border-top: var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      background: inherit;
+    }
+
+    .wcc-hint {
+      font-size: 0.78rem;
+      opacity: 0.45;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .wcc-empty {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.45;
+      font-family: var(--f-display);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="../index.html" class="nav-logo" aria-label="WRNS Work Edition Home">
+      <span>WRNS</span>
+      <span class="logo-badge"><span class="badge-full">Work Edition</span><span class="badge-short">WE</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="quest.html">Quest</a></li>
+      <li><a href="daily.html">Daily</a></li>
+      <li><a href="rapid-fire.html">Rapid Fire</a></li>
+      <li><a href="wisdom.html" class="active">Wisdom</a></li>
+    </ul>
+    <button class="nav-sound-btn" id="soundToggle" aria-label="Toggle sound">🔊</button>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="../index.html">🏠 Home</a>
+  <a href="quest.html">🃏 Quest Decks</a>
+  <a href="daily.html">☀️ Daily Oracle</a>
+  <a href="rapid-fire.html">⚡ Rapid Fire</a>
+  <a href="wisdom.html">📖 Wisdom Vault</a>
+</div>
+
+<main class="page">
+  <div class="container section">
+
+    <!-- Header -->
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px;" class="page-enter">
+      <div>
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1 style="margin-top: 16px; font-size: clamp(1.8rem, 4vw, 3rem);">📖 Wisdom Vault</h1>
+        <p style="opacity: 0.6; margin-top: 6px;">The complete Work Wisdom Playbook — 63 scrolls of workplace truth</p>
+      </div>
+      <div class="wisdom-count-chip" id="progressChip">0 / 63 read</div>
+    </div>
+
+    <!-- Wisdom hero -->
+    <div class="wisdom-hero page-enter">
+      <div class="wisdom-hero-content">
+        <div class="hero-eyebrow" style="background: rgba(255,229,0,0.15); border-color: rgba(255,229,0,0.3); color: var(--c-yellow);">📖 Wisdom Playbook for Work</div>
+        <h2 style="color: white; margin-top: 12px;">A comprehensive, critical, practical guide for surviving, growing, leading, and staying sane at work.</h2>
+        <p class="wisdom-hero-sub">Work wisdom is not just "working hard," "being smart," or "being nice." It is the ability to understand people, incentives, timing, power, quality, communication, politics, and your own limits — then act with maturity.</p>
+        <div class="wisdom-formula" aria-label="Work wisdom formula">
+          ⚡ Wisdom = Competence + Judgment + Communication + Character + Timing
+        </div>
+      </div>
+    </div>
+
+    <!-- Intro summary cards -->
+    <div class="intro-cards stagger">
+      <div class="intro-card">
+        <div class="intro-card-label">The Core Truth</div>
+        <div class="intro-card-val">The wisest people at work are not the loudest or most talented. They know what matters, who matters, when to speak, when to wait, when to push, and when to grow up.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-label">3 Layers</div>
+        <div class="intro-card-val">Task Wisdom · People Wisdom · System Wisdom — you need all three to navigate any workplace.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-label">10 Commandments</div>
+        <div class="intro-card-val">From "Activity ≠ Value" to "Know When To Leave" — the foundational laws of work wisdom.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-label">54+ Scripts</div>
+        <div class="intro-card-val">Exact phrases for every tough work situation — feedback, conflict, promotion, mistakes, overload, and more.</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="margin-bottom: 24px;">
+      <div class="progress-header">
+        <span class="progress-text" id="progressLabel">0 of 63 scrolls read</span>
+        <button class="btn btn-ghost btn-sm" id="resetProgressBtn" style="border: var(--border);">🔄 Reset</button>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="63" aria-valuenow="0" id="progressBarEl">
+        <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+      <div class="search-wrap" style="flex: 1; min-width: 200px;">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="search" class="search-input" id="searchInput" placeholder="Search wisdom scrolls…" aria-label="Search wisdom sections">
+      </div>
+    </div>
+
+    <!-- Tag filters -->
+    <div class="tag-section">
+      <div class="tag-carousel-wrap">
+        <button class="tag-scroll-btn" id="tagScrollPrev" aria-label="Scroll tags left">&#8592;</button>
+        <div class="tag-filter-scroll" id="tagFilterScroll">
+          <div class="tag-filter-row" id="tagFilterRow" role="group" aria-label="Filter by tag">
+            <button class="tag-filter active" data-tag="all">All</button>
+            <!-- populated by JS -->
+          </div>
+        </div>
+        <button class="tag-scroll-btn" id="tagScrollNext" aria-label="Scroll tags right">&#8594;</button>
+      </div>
+    </div>
+
+    <!-- Wisdom carousel -->
+    <div id="wisdomCarousel"></div>
+
+    <div style="margin: 48px 0 24px; text-align: center;">
+      <div class="reset-notice">
+        <span>📚 The wisest people at work are not the loudest or most talented.</span>
+        <a href="quest.html" class="btn btn-yellow btn-sm">🃏 Play Quest Decks →</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Wisdom Modal -->
+<div class="modal-overlay" id="wisdomModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalTitleEl">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display: flex; align-items: flex-start; gap: 10px; flex: 1;">
+        <span class="modal-emoji" id="modalEmoji">📖</span>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.45;" id="modalNum">Section 1</span>
+            <span class="wisdom-modal-tag" id="modalTag"></span>
+          </div>
+          <h2 class="modal-title" id="modalTitleEl">Title</h2>
+        </div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body wisdom-modal-content" id="modalBody">
+      Content here
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-mint btn-sm" id="markReadBtn">✅ Mark as Read</button>
+      <button class="btn btn-ghost btn-sm" id="prevSectionBtn" style="border: var(--border);">← Prev</button>
+      <button class="btn btn-ghost btn-sm" id="nextSectionBtn" style="border: var(--border);">Next →</button>
+      <button class="btn btn-ghost btn-sm" id="copyWisdomBtn" style="border: var(--border); margin-left: auto;">📋 Copy</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/sounds.js"></script>
+<script src="../js/carousel.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Sounds.init();
+  const soundOn = localStorage.getItem('wrns_sound') !== 'false';
+  Sounds.setEnabled(soundOn);
+  document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+  document.getElementById('soundToggle').addEventListener('click', function() {
+    const on = localStorage.getItem('wrns_sound') !== 'false';
+    const next = !on;
+    localStorage.setItem('wrns_sound', next);
+    Sounds.setEnabled(next);
+    this.textContent = next ? '🔊' : '🔇';
+    if (next) Sounds.playClick();
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+    mobileMenu.classList.toggle('open', open);
+  });
+
+  // ── Tag color map ─────────────────────────────────────────────
+  const TAG_COLORS = {
+    'Foundations':    '#FFE500',
+    'Framework':      '#00D97E',
+    'Formula':        '#0047FF',
+    'Strategy':       '#7000FF',
+    'Mindset':        '#FF4500',
+    'Commandments':   '#FF8A00',
+    'Problem Solving':'#FF1744',
+    'Execution':      '#00C8C8',
+    'Communication':  '#AAFF00',
+    'Meetings':       '#0047FF',
+    'Feedback':       '#00D97E',
+    'Conflict':       '#FF1744',
+    'Politics':       '#7000FF',
+    'Leadership':     '#FF4500',
+    'Career':         '#AAFF00',
+    'Reputation':     '#FF8A00',
+    'Self-Awareness': '#FFE500',
+    'Self-Management':'#00D97E',
+    'Relationships':  '#00C8C8',
+    'Character':      '#0047FF',
+    'Resilience':     '#FF4500',
+    'Growth':         '#AAFF00',
+    'Awareness':      '#FF8A00',
+    'Tools':          '#FFE500',
+    'Scripts':        '#00D97E',
+  };
+
+  function getTagColor(tag) { return TAG_COLORS[tag] || '#FFE500'; }
+
+  function getTagTextColor(tag) {
+    const dark = ['Formula','Strategy','Mindset','Problem Solving','Conflict','Politics','Leadership','Meetings','Character','Resilience'];
+    return dark.includes(tag) ? '#fff' : '#0A0A0A';
+  }
+
+  // ── Tag scroll buttons ────────────────────────────────────────
+  const tagScroll = document.getElementById('tagFilterScroll');
+  const tagPrev   = document.getElementById('tagScrollPrev');
+  const tagNext   = document.getElementById('tagScrollNext');
+  const SCROLL_STEP = 180;
+
+  function updateTagScrollBtns() {
+    tagPrev.disabled = tagScroll.scrollLeft <= 0;
+    tagNext.disabled = tagScroll.scrollLeft >= tagScroll.scrollWidth - tagScroll.clientWidth - 1;
+  }
+
+  tagPrev.addEventListener('click', () => { tagScroll.scrollLeft -= SCROLL_STEP; });
+  tagNext.addEventListener('click', () => { tagScroll.scrollLeft += SCROLL_STEP; });
+  tagScroll.addEventListener('scroll', updateTagScrollBtns);
+  updateTagScrollBtns();
+
+  // ── Tag filters ───────────────────────────────────────────────
+  const allTags = [...new Set(WISDOM_SECTIONS.map(s => s.tag))].sort();
+  const tagRow = document.getElementById('tagFilterRow');
+  let currentTag = 'all';
+
+  allTags.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.className = 'tag-filter';
+    btn.dataset.tag = tag;
+    btn.textContent = tag;
+    btn.style.background = getTagColor(tag);
+    btn.style.color = getTagTextColor(tag);
+    btn.addEventListener('click', () => {
+      currentTag = tag;
+      document.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Sounds.playClick();
+      buildCarousel(getFilteredSections());
+    });
+    tagRow.appendChild(btn);
+  });
+
+  tagRow.querySelector('[data-tag="all"]').addEventListener('click', function() {
+    currentTag = 'all';
+    document.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    Sounds.playClick();
+    buildCarousel(getFilteredSections());
+  });
+
+  // Update scroll button state after tags are populated
+  requestAnimationFrame(updateTagScrollBtns);
+
+  // ── Search ────────────────────────────────────────────────────
+  let searchQuery = '';
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    buildCarousel(getFilteredSections());
+  });
+
+  function getFilteredSections() {
+    return Engine.getHourlyWisdomOrder().filter(s => {
+      const tagMatch = currentTag === 'all' || s.tag === currentTag;
+      const searchMatch = !searchQuery ||
+        s.title.toLowerCase().includes(searchQuery) ||
+        s.tag.toLowerCase().includes(searchQuery) ||
+        s.content.toLowerCase().includes(searchQuery);
+      return tagMatch && searchMatch;
+    });
+  }
+
+  // ── Carousel ──────────────────────────────────────────────────
+  let activeCarousel = null;
+  let filteredSections = [];
+
+  function buildCarousel(sections) {
+    filteredSections = sections;
+    if (activeCarousel) { activeCarousel.destroy(); activeCarousel = null; }
+    const container = document.getElementById('wisdomCarousel');
+
+    if (sections.length === 0) {
+      container.innerHTML = '<div class="wcc-empty">No wisdom scrolls match your filters.</div>';
+      return;
+    }
+
+    activeCarousel = new Carousel(container, sections, {
+      renderCard: (section) => {
+        const card = document.createElement('div');
+        card.className = `wisdom-carousel-card ${Engine.isRead(section.id) ? 'read' : ''}`;
+        card.dataset.id = section.id;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `${section.title} — click to read`);
+
+        const tagColor = getTagColor(section.tag);
+        const tagText = getTagTextColor(section.tag);
+
+        card.innerHTML = `
+          <div class="wcc-header">
+            <div class="wcc-top-row">
+              <div class="wcc-left">
+                <span class="wcc-emoji">${section.icon}</span>
+                <div class="wcc-meta">
+                  <span class="wic-num">#${section.id}</span>
+                  <span class="wic-tag" style="background: ${tagColor}; color: ${tagText};">${section.tag}</span>
+                </div>
+              </div>
+              <span class="wcc-read-indicator">✓ Read</span>
+            </div>
+            <h2 class="wcc-title">${section.title}</h2>
+            <p class="wcc-hint">Tap to read full scroll →</p>
+          </div>
+          <div class="wcc-body">${section.content}</div>
+          <div class="wcc-footer">
+            <button class="btn btn-yellow btn-sm wcc-open-btn">📖 Open Full Scroll</button>
+            <button class="btn btn-ghost btn-sm wcc-copy-btn" style="border: var(--border); margin-left: auto;">📋 Copy</button>
+          </div>
+        `;
+
+        // Click header → open modal
+        card.querySelector('.wcc-header').addEventListener('click', () => openModal(section.id));
+        card.querySelector('.wcc-open-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openModal(section.id);
+        });
+        card.querySelector('.wcc-copy-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(`${section.title}\n\n${section.content}`).then(() => {
+            Sounds.playClick();
+            showToast('📋 Copied!');
+          });
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(section.id); }
+        });
+
+        return card;
+      }
+    });
+  }
+
+  buildCarousel(getFilteredSections());
+  updateProgress();
+
+  // ── Modal ─────────────────────────────────────────────────────
+  let currentModalId = null;
+
+  function openModal(id) {
+    const section = WISDOM_SECTIONS.find(s => s.id === id);
+    if (!section) return;
+
+    currentModalId = id;
+    document.getElementById('modalEmoji').textContent = section.icon;
+    document.getElementById('modalNum').textContent = `Scroll #${section.id}`;
+    document.getElementById('modalTitleEl').textContent = section.title;
+    document.getElementById('modalBody').textContent = section.content;
+
+    const tagEl = document.getElementById('modalTag');
+    tagEl.textContent = section.tag;
+    tagEl.style.background = getTagColor(section.tag);
+    tagEl.style.color = getTagTextColor(section.tag);
+
+    // Prev/next within current filtered set
+    const idx = filteredSections.findIndex(s => s.id === id);
+    document.getElementById('prevSectionBtn').disabled = idx <= 0;
+    document.getElementById('nextSectionBtn').disabled = idx >= filteredSections.length - 1;
+
+    document.getElementById('markReadBtn').textContent = Engine.isRead(id) ? '✅ Already Read' : '✅ Mark as Read';
+
+    document.getElementById('wisdomModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('modalBody').scrollTop = 0;
+    Sounds.playUnlock();
+
+    clearTimeout(openModal._timer);
+    openModal._timer = setTimeout(() => markRead(id), 3000);
+  }
+
+  openModal._timer = null;
+
+  function closeModal() {
+    clearTimeout(openModal._timer);
+    document.getElementById('wisdomModal').style.display = 'none';
+    document.body.style.overflow = '';
+    currentModalId = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('wisdomModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('wisdomModal')) closeModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && currentModalId) closeModal();
+    if (e.key === 'ArrowRight' && currentModalId) navigateModal(1);
+    if (e.key === 'ArrowLeft' && currentModalId) navigateModal(-1);
+  });
+
+  document.getElementById('prevSectionBtn').addEventListener('click', () => navigateModal(-1));
+  document.getElementById('nextSectionBtn').addEventListener('click', () => navigateModal(1));
+
+  function navigateModal(dir) {
+    if (!currentModalId) return;
+    const idx = filteredSections.findIndex(s => s.id === currentModalId);
+    const nextIdx = idx + dir;
+    if (nextIdx < 0 || nextIdx >= filteredSections.length) return;
+    Sounds.playWhoosh();
+    openModal(filteredSections[nextIdx].id);
+  }
+
+  document.getElementById('markReadBtn').addEventListener('click', () => {
+    if (currentModalId) markRead(currentModalId);
+  });
+
+  document.getElementById('copyWisdomBtn').addEventListener('click', () => {
+    if (!currentModalId) return;
+    const section = WISDOM_SECTIONS.find(s => s.id === currentModalId);
+    if (section) {
+      navigator.clipboard.writeText(`${section.title}\n\n${section.content}`).then(() => {
+        Sounds.playClick();
+        showToast('📋 Copied!');
+      });
+    }
+  });
+
+  function markRead(id) {
+    Engine.markRead(id);
+    // Update the visible carousel card if it's the current one
+    const card = document.querySelector(`.wisdom-carousel-card[data-id="${id}"]`);
+    if (card) card.classList.add('read');
+    const readBtn = document.getElementById('markReadBtn');
+    if (readBtn) readBtn.textContent = '✅ Already Read';
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = Engine.getReadCount();
+    const total = WISDOM_SECTIONS.length;
+    document.getElementById('progressLabel').textContent = `${count} of ${total} scrolls read`;
+    document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
+    document.getElementById('progressBarEl').setAttribute('aria-valuenow', count);
+    document.getElementById('progressChip').textContent = `${count} / ${total} read`;
+  }
+
+  document.getElementById('resetProgressBtn').addEventListener('click', () => {
+    if (confirm('Reset all reading progress?')) {
+      Engine.resetProgress();
+      buildCarousel(getFilteredSections());
+      updateProgress();
+      Sounds.playClick();
+      showToast('🔄 Progress reset');
+    }
+  });
+});
+
+function showToast(msg, dur = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), dur);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+/* ============================================================
+   WRNS WORK EDITION — ANIMATIONS
+   ============================================================ */
+
+/* ── Carousel card transitions ────────────────────────────── */
+@keyframes enterFromRight {
+  from { transform: translateX(60px) scale(0.95); opacity: 0; }
+  to   { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes enterFromLeft {
+  from { transform: translateX(-60px) scale(0.95); opacity: 0; }
+  to   { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes exitToLeft {
+  from { transform: translateX(0) scale(1); opacity: 1; }
+  to   { transform: translateX(-60px) scale(0.95); opacity: 0; }
+}
+
+@keyframes exitToRight {
+  from { transform: translateX(0) scale(1); opacity: 1; }
+  to   { transform: translateX(60px) scale(0.95); opacity: 0; }
+}
+
+.carousel-card.enter-right { animation: enterFromRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.carousel-card.enter-left  { animation: enterFromLeft  0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.carousel-card.exit-left   { animation: exitToLeft     0.22s ease-in forwards; }
+.carousel-card.exit-right  { animation: exitToRight    0.22s ease-in forwards; }
+.carousel-card.entered     { animation: none; opacity: 1; transform: none; }
+
+/* ── Page entry ───────────────────────────────────────────── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.page-enter { animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* ── Staggered grid items ─────────────────────────────────── */
+.stagger > * {
+  animation: cardReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.stagger > *:nth-child(1)  { animation-delay: 0.05s; }
+.stagger > *:nth-child(2)  { animation-delay: 0.10s; }
+.stagger > *:nth-child(3)  { animation-delay: 0.15s; }
+.stagger > *:nth-child(4)  { animation-delay: 0.20s; }
+.stagger > *:nth-child(5)  { animation-delay: 0.25s; }
+.stagger > *:nth-child(6)  { animation-delay: 0.30s; }
+.stagger > *:nth-child(7)  { animation-delay: 0.35s; }
+.stagger > *:nth-child(8)  { animation-delay: 0.40s; }
+.stagger > *:nth-child(9)  { animation-delay: 0.45s; }
+.stagger > *:nth-child(10) { animation-delay: 0.50s; }
+.stagger > *:nth-child(11) { animation-delay: 0.55s; }
+.stagger > *:nth-child(12) { animation-delay: 0.60s; }
+.stagger > *:nth-child(n+13) { animation-delay: 0.65s; }
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Hero text ────────────────────────────────────────────── */
+@keyframes heroTitle {
+  from { opacity: 0; transform: translateY(30px) skewY(2deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes heroSub {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes heroBadge {
+  from { opacity: 0; transform: scale(0.8) rotate(-4deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+.anim-hero-badge { animation: heroBadge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both; }
+.anim-hero-title { animation: heroTitle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+.anim-hero-sub   { animation: heroSub   0.5s ease 0.35s both; }
+.anim-hero-cta   { animation: heroSub   0.5s ease 0.45s both; }
+
+/* ── Float animation (decorative) ────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-12px) rotate(3deg); }
+  66%       { transform: translateY(-6px) rotate(-2deg); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%       { transform: translateY(-18px) rotate(-4deg); }
+  70%       { transform: translateY(-8px) rotate(2deg); }
+}
+
+.float-a { animation: float  5s ease-in-out infinite; }
+.float-b { animation: floatB 7s ease-in-out infinite; }
+.float-c { animation: float  9s ease-in-out 1s infinite; }
+
+/* ── Spin slow ────────────────────────────────────────────── */
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spinSlow 20s linear infinite; }
+
+/* ── Card flip (3D) ───────────────────────────────────────── */
+@keyframes flipIn {
+  from { transform: perspective(600px) rotateY(-90deg); opacity: 0; }
+  to   { transform: perspective(600px) rotateY(0deg); opacity: 1; }
+}
+
+@keyframes flipOut {
+  from { transform: perspective(600px) rotateY(0deg); opacity: 1; }
+  to   { transform: perspective(600px) rotateY(90deg); opacity: 0; }
+}
+
+.flip-in  { animation: flipIn  0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.flip-out { animation: flipOut 0.2s ease-in both; }
+
+/* ── Bounce in ────────────────────────────────────────────── */
+@keyframes bounceIn {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  80%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+.bounce-in { animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ── Shake (error/buzz) ───────────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+.shake { animation: shake 0.4s ease; }
+
+/* ── Countdown number pop ─────────────────────────────────── */
+@keyframes countPop {
+  from { transform: scale(2); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.count-pop { animation: countPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ── Score reveal ─────────────────────────────────────────── */
+@keyframes scoreReveal {
+  from { transform: translateY(40px) scale(0.8); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.score-reveal { animation: scoreReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ── Marquee (scrolling text band) ───────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+  will-change: transform;
+}
+
+.marquee-wrap {
+  overflow: hidden;
+  border-top: var(--border);
+  border-bottom: var(--border);
+  background: var(--c-yellow);
+  padding: 12px 0;
+}
+
+.marquee-item {
+  white-space: nowrap;
+  padding: 0 32px;
+  font-family: var(--f-display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.marquee-sep {
+  padding: 0 8px;
+  opacity: 0.4;
+}
+
+/* ── Glow pulse ───────────────────────────────────────────── */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,229,0,0.4); }
+  50%       { box-shadow: 0 0 0 12px rgba(255,229,0,0); }
+}
+
+.glow-pulse { animation: glowPulse 2s ease infinite; }
+
+/* ── Wiggle ───────────────────────────────────────────────── */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25%       { transform: rotate(-6deg); }
+  75%       { transform: rotate(6deg); }
+}
+
+.wiggle { animation: wiggle 0.5s ease; }
+
+/* ── Slide up (panel reveal) ──────────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.slide-up { animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* ── Daily card number glow ───────────────────────────────── */
+@keyframes numberGlow {
+  0%, 100% { opacity: 0.06; }
+  50%       { opacity: 0.12; }
+}
+
+.daily-bg-num {
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
+  font-family: var(--f-display);
+  font-size: clamp(8rem, 20vw, 14rem);
+  font-weight: 800;
+  color: var(--c-white);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  animation: numberGlow 3s ease-in-out infinite;
+}
+
+/* ── Rapid fire flash ─────────────────────────────────────── */
+@keyframes rfFlash {
+  0%   { background: var(--c-yellow); }
+  100% { background: var(--c-black); }
+}
+
+.rf-flash { animation: rfFlash 0.2s ease forwards; }
+
+/* ── Card hover tilt (CSS fallback) ──────────────────────── */
+.deck-card, .mode-card, .wisdom-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ── Rotating border ──────────────────────────────────────── */
+@keyframes borderSpin {
+  to { transform: rotate(360deg); }
+}
+
+.border-spin-wrap {
+  position: relative;
+  padding: 3px;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.border-spin-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(var(--c-yellow), var(--c-coral), var(--c-blue), var(--c-mint), var(--c-pink), var(--c-yellow));
+  animation: borderSpin 4s linear infinite;
+}
+
+.border-spin-inner {
+  position: relative;
+  background: var(--c-white);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

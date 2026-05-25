@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Oracle — WRNS Work Edition</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <style>
+    .daily-page {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .date-display {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .date-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-display);
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 10px 20px;
+      border: var(--border-thick);
+      border-radius: var(--radius-pill);
+      background: var(--c-black);
+      color: var(--c-white);
+      box-shadow: var(--sh-md);
+    }
+
+    /* Countdown to next day */
+    .next-oracle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--c-cream);
+      box-shadow: var(--sh-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+
+    .next-oracle-time {
+      font-family: var(--f-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    /* Daily Q card */
+    .daily-q-card {
+      background: var(--c-black);
+      color: var(--c-white);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: clamp(32px, 5vw, 56px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sh-xl);
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .daily-q-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 80% 20%, rgba(255,229,0,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .daily-q-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--f-display);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--c-yellow);
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .daily-q-label .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--c-yellow);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    .daily-q-text {
+      font-family: var(--f-display);
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .daily-q-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .daily-q-deck {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .daily-q-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      transition: border-color var(--t-fast), color var(--t-fast);
+      background: none;
+      font-family: var(--f-body);
+    }
+
+    .daily-q-share:hover {
+      border-color: var(--c-yellow);
+      color: var(--c-yellow);
+    }
+
+    .big-bg-num {
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+      font-family: var(--f-display);
+      font-size: clamp(8rem, 20vw, 14rem);
+      font-weight: 800;
+      color: white;
+      opacity: 0.04;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Quote card */
+    .quote-block {
+      background: var(--c-yellow);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: clamp(28px, 4vw, 48px);
+      box-shadow: var(--sh-lg);
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .quote-marks {
+      font-family: serif;
+      font-size: 5rem;
+      line-height: 0.7;
+      opacity: 0.12;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .quote-text {
+      font-family: var(--f-display);
+      font-size: clamp(1.1rem, 2.8vw, 1.7rem);
+      font-weight: 800;
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .quote-footer {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .quote-tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--c-white);
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: var(--sh-sm);
+    }
+
+    .quote-src {
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.55;
+    }
+
+    /* Complete the sentence card */
+    .sentence-card {
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-white);
+      box-shadow: var(--sh-lg);
+      overflow: hidden;
+    }
+
+    .sentence-header {
+      background: var(--c-purple);
+      color: var(--c-white);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sentence-header h3 {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .sentence-body {
+      padding: 28px;
+    }
+
+    .sentence-prompt {
+      font-family: var(--f-display);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+
+    .sentence-input {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px 18px;
+      font-family: var(--f-body);
+      font-size: 1rem;
+      border: var(--border-thick);
+      border-radius: var(--radius-sm);
+      background: var(--c-cream);
+      resize: vertical;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast);
+      outline: none;
+    }
+
+    .sentence-input:focus {
+      border-color: var(--c-purple);
+      box-shadow: 0 0 0 3px rgba(112,0,255,0.12);
+    }
+
+    /* Daily stats row */
+    .daily-meta-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .daily-meta-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-white);
+      box-shadow: var(--sh-md);
+      text-align: center;
+      gap: 6px;
+    }
+
+    .daily-meta-val {
+      font-family: var(--f-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .daily-meta-lbl {
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0.5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Day streak visual */
+    .streak-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .streak-day {
+      width: 28px;
+      height: 28px;
+      border: var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .streak-day.today {
+      background: var(--c-yellow);
+      box-shadow: var(--sh-sm);
+      font-size: 0.8rem;
+    }
+
+    .streak-day.visited { background: var(--c-mint); }
+
+    /* Reflection area */
+    .reflection-section {
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-cream);
+      padding: 28px;
+      box-shadow: var(--sh-md);
+    }
+
+    /* Section labels */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--f-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .section-label .num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--c-black);
+      color: var(--c-white);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="../index.html" class="nav-logo" aria-label="WRNS Work Edition Home">
+      <span>WRNS</span>
+      <span class="logo-badge"><span class="badge-full">Work Edition</span><span class="badge-short">WE</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="quest.html">Quest</a></li>
+      <li><a href="daily.html" class="active">Daily</a></li>
+      <li><a href="rapid-fire.html">Rapid Fire</a></li>
+      <li><a href="wisdom.html">Wisdom</a></li>
+    </ul>
+    <button class="nav-sound-btn" id="soundToggle" aria-label="Toggle sound">🔊</button>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="../index.html">🏠 Home</a>
+  <a href="quest.html">🃏 Quest Decks</a>
+  <a href="daily.html">☀️ Daily Oracle</a>
+  <a href="rapid-fire.html">⚡ Rapid Fire</a>
+  <a href="wisdom.html">📖 Wisdom Vault</a>
+</div>
+
+<main class="page">
+  <div class="container section daily-page">
+
+    <!-- Header -->
+    <div class="section-header page-enter" style="align-items: flex-start;">
+      <div>
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1 style="margin-top: 16px; font-size: clamp(1.8rem, 4vw, 3rem);">☀️ Daily Oracle</h1>
+        <p style="opacity: 0.6; margin-top: 6px;">Fresh question, quote & challenge — seeded to today</p>
+      </div>
+      <div class="date-display">
+        <div class="date-chip">📅 <span id="todayDate">—</span></div>
+        <div class="next-oracle">
+          🕛 New oracle in <span class="next-oracle-time" id="countdownTime">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily stats -->
+    <div class="daily-meta-row stagger" style="margin-bottom: 32px;">
+      <div class="daily-meta-card">
+        <span class="daily-meta-val" id="dayNum">—</span>
+        <span class="daily-meta-lbl">Day of Year</span>
+      </div>
+      <div class="daily-meta-card">
+        <span class="daily-meta-val" id="qTotal">240</span>
+        <span class="daily-meta-lbl">Questions in Pool</span>
+      </div>
+      <div class="daily-meta-card">
+        <span class="daily-meta-val" id="quoteNum">—</span>
+        <span class="daily-meta-lbl">Today's Quote #</span>
+      </div>
+      <div class="daily-meta-card">
+        <span class="daily-meta-val" id="wisdomRead">—</span>
+        <span class="daily-meta-lbl">Wisdom Read</span>
+      </div>
+    </div>
+
+    <!-- 1. Question of the Day -->
+    <div style="margin-bottom: 32px;" class="page-enter">
+      <div class="section-label">
+        <span class="num">1</span>
+        <span>Question of the Day</span>
+      </div>
+      <div class="daily-q-card bounce-in" id="dailyQCard">
+        <div>
+          <div class="daily-q-label">
+            <span class="live-dot"></span>
+            Today's Question
+          </div>
+          <div class="daily-q-text" id="dailyQText">Loading…</div>
+        </div>
+        <div class="big-bg-num" aria-hidden="true" id="dailyQBgNum">?</div>
+        <div class="daily-q-footer">
+          <span class="daily-q-deck" id="dailyQDeck">—</span>
+          <button class="daily-q-share" id="shareQBtn" aria-label="Copy question">📋 Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Quote of the Day -->
+    <div style="margin-bottom: 32px;" class="page-enter">
+      <div class="section-label">
+        <span class="num">2</span>
+        <span>Quote of the Day</span>
+        <span class="badge" style="background: var(--c-yellow);">📖 Wisdom Playbook</span>
+      </div>
+      <div class="quote-block">
+        <span class="quote-marks">"</span>
+        <div class="quote-text" id="dailyQuoteText">Loading…</div>
+        <div class="quote-footer">
+          <span class="quote-tag-pill">🏷️ <span id="dailyQuoteTag">—</span></span>
+          <button class="btn btn-ghost btn-sm" id="shareQuoteBtn" style="border: var(--border);" aria-label="Copy quote">📋 Copy Quote</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Complete the Sentence challenge -->
+    <div style="margin-bottom: 32px;" class="page-enter">
+      <div class="section-label">
+        <span class="num">3</span>
+        <span>Daily Challenge</span>
+        <span class="badge" style="background: var(--c-purple); color: white;">✏️ Complete The Sentence</span>
+      </div>
+      <div class="sentence-card">
+        <div class="sentence-header">
+          <span style="font-size: 1.3rem;">✏️</span>
+          <h3>Complete The Sentence — Today's Prompt</h3>
+        </div>
+        <div class="sentence-body">
+          <div class="sentence-prompt" id="dailySentence">Loading…</div>
+          <label for="sentenceAnswer" class="sr-only">Your answer</label>
+          <textarea class="sentence-input" id="sentenceAnswer" placeholder="Type your answer here — no pressure, no wrong answers…" rows="4"></textarea>
+          <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+            <button class="btn btn-purple btn-sm" id="saveSentenceBtn">💾 Save Response</button>
+            <button class="btn btn-ghost btn-sm" id="clearSentenceBtn" style="border: var(--border);">🗑️ Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Bonus: Rapid fire preview -->
+    <div class="reflection-section page-enter" style="margin-bottom: 32px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <div class="section-label" style="margin-bottom: 0;">
+          <span class="num">4</span>
+          <span>Today's Rapid Fire Taste</span>
+        </div>
+        <a href="rapid-fire.html" class="btn btn-black btn-sm">⚡ Full Mode →</a>
+      </div>
+      <div id="bonusCarouselWrap">
+        <div id="bonusCarousel"></div>
+      </div>
+    </div>
+
+    <!-- 5. Navigate to more -->
+    <div class="grid-2 stagger" style="margin-bottom: 48px; gap: var(--gap);">
+      <a href="quest.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit;">
+        <div class="mode-card-bg" style="background: var(--c-yellow);"></div>
+        <span class="mode-card-emoji" style="font-size: 2rem;">🃏</span>
+        <div class="mode-card-content">
+          <div class="mode-card-title" style="font-size: 1.1rem;">Browse All Decks</div>
+          <div class="mode-card-desc" style="font-size: 0.8rem;">12 realms · 240 questions</div>
+        </div>
+        <span class="mode-card-arrow" style="bottom: 20px; right: 20px;">→</span>
+      </a>
+      <a href="wisdom.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit;">
+        <div class="mode-card-bg" style="background: var(--c-purple);"></div>
+        <span class="mode-card-emoji" style="font-size: 2rem;">📖</span>
+        <div class="mode-card-content">
+          <div class="mode-card-title" style="font-size: 1.1rem;">Wisdom Vault</div>
+          <div class="mode-card-desc" style="font-size: 0.8rem;">63 work wisdom scrolls</div>
+        </div>
+        <span class="mode-card-arrow" style="bottom: 20px; right: 20px;">→</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/sounds.js"></script>
+<script src="../js/carousel.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Sounds.init();
+  const soundOn = localStorage.getItem('wrns_sound') !== 'false';
+  Sounds.setEnabled(soundOn);
+  document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+  document.getElementById('soundToggle').addEventListener('click', function() {
+    const on = localStorage.getItem('wrns_sound') !== 'false';
+    const next = !on;
+    localStorage.setItem('wrns_sound', next);
+    Sounds.setEnabled(next);
+    this.textContent = next ? '🔊' : '🔇';
+    if (next) Sounds.playClick();
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+    mobileMenu.classList.toggle('open', open);
+  });
+
+  // Date display
+  const now = new Date();
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-SG', opts);
+
+  // Day of year
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  document.getElementById('dayNum').textContent = dayOfYear;
+
+  // Countdown to midnight
+  function updateCountdown() {
+    document.getElementById('countdownTime').textContent =
+      Engine.formatCountdown(Engine.msToMidnight());
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // Daily question
+  const dq = Engine.getDailyQuestion();
+  document.getElementById('dailyQText').textContent = dq.q;
+  document.getElementById('dailyQDeck').textContent = `${dq.deck}`;
+  document.getElementById('dailyQBgNum').textContent = dayOfYear;
+
+  // Daily quote
+  const dqt = Engine.getDailyQuote();
+  document.getElementById('dailyQuoteText').textContent = dqt.text;
+  document.getElementById('dailyQuoteTag').textContent = dqt.tag;
+
+  // Quote number (index in array)
+  const qIdx = QUOTES.findIndex(q => q.text === dqt.text);
+  document.getElementById('quoteNum').textContent = `#${qIdx + 1}`;
+
+  // Wisdom read count
+  document.getElementById('wisdomRead').textContent =
+    `${Engine.getReadCount()}/${WISDOM_SECTIONS.length}`;
+
+  // Daily sentence
+  document.getElementById('dailySentence').textContent = Engine.getDailySentence();
+
+  // Restore saved sentence
+  const savedKey = `wrns_daily_sentence_${Engine.getDaySeed()}`;
+  const saved = localStorage.getItem(savedKey);
+  if (saved) document.getElementById('sentenceAnswer').value = saved;
+
+  document.getElementById('saveSentenceBtn').addEventListener('click', () => {
+    const val = document.getElementById('sentenceAnswer').value.trim();
+    if (val) {
+      localStorage.setItem(savedKey, val);
+      Sounds.playComplete();
+      showToast('💾 Response saved!');
+    }
+  });
+
+  document.getElementById('clearSentenceBtn').addEventListener('click', () => {
+    document.getElementById('sentenceAnswer').value = '';
+    localStorage.removeItem(savedKey);
+    Sounds.playClick();
+    showToast('🗑️ Cleared');
+  });
+
+  // Share / copy
+  document.getElementById('shareQBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(dq.q).then(() => {
+      Sounds.playClick();
+      showToast('📋 Question copied!');
+    });
+  });
+
+  document.getElementById('shareQuoteBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(`"${dqt.text}" — WRNS Wisdom Playbook`).then(() => {
+      Sounds.playClick();
+      showToast('📋 Quote copied!');
+    });
+  });
+
+  // Bonus carousel: 5 random questions from today's seed
+  const bonusQs = Engine.seededShuffle(ALL_QUESTIONS, Engine.getDaySeed() + 10).slice(0, 8);
+  const bonusEl = document.getElementById('bonusCarousel');
+
+  const bonusCarousel = new Carousel(bonusEl, bonusQs, {
+    renderCard: (item) => {
+      const el = document.createElement('div');
+      const deck = DECKS.find(d => d.id === item.deckId);
+      el.style.cssText = `
+        background: var(--c-white);
+        border: 2.5px solid var(--c-black);
+        border-radius: 16px;
+        padding: 28px 32px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 5px 5px 0 var(--c-black);
+        position: relative;
+        overflow: hidden;
+      `;
+      el.innerHTML = `
+        <div style="height: 4px; background: ${item.color}; position: absolute; top: 0; left: 0; right: 0; border-radius: 16px 16px 0 0;"></div>
+        <div style="font-family: var(--f-display); font-size: clamp(1.1rem,3vw,1.5rem); font-weight: 800; line-height: 1.3; padding-top: 8px;">${item.q}</div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1.5px solid var(--c-black); border-radius: 999px; font-size: 0.78rem; font-weight: 700; background: ${item.color}; margin-top: 16px; box-shadow: 2px 2px 0 var(--c-black); align-self: flex-start;">
+          ${deck ? deck.emoji : '🃏'} ${item.deck}
+        </div>
+      `;
+      return el;
+    }
+  });
+  bonusCarousel.enableSwipe();
+
+  // Sound on page load
+  setTimeout(() => Sounds.playReveal(), 400);
+
+  // 3D tilt on daily card
+  const dailyCard = document.getElementById('dailyQCard');
+  dailyCard.addEventListener('mousemove', (e) => {
+    const rect = dailyCard.getBoundingClientRect();
+    const dx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const dy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+    dailyCard.style.transform = `perspective(800px) rotateY(${dx * 4}deg) rotateX(${-dy * 4}deg)`;
+  });
+  dailyCard.addEventListener('mouseleave', () => { dailyCard.style.transform = ''; });
+});
+
+function showToast(msg, dur = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), dur);
+}
+</script>
+</body>
+</html>

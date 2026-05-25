@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapid Fire — WRNS Work Edition</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <style>
+    .rf-page { max-width: 680px; margin: 0 auto; }
+
+    /* Setup screen */
+    .setup-screen { display: flex; flex-direction: column; gap: 28px; }
+
+    .setup-section-label {
+      font-family: var(--f-display);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.5;
+      margin-bottom: 12px;
+    }
+
+    .deck-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+      gap: 10px;
+    }
+
+    .deck-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border: var(--border-thick);
+      border-radius: var(--radius-sm);
+      background: var(--c-white);
+      cursor: pointer;
+      transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+      box-shadow: var(--sh-sm);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .deck-toggle.selected {
+      transform: translate(-2px,-2px);
+      box-shadow: var(--sh-md);
+    }
+
+    .deck-toggle-emoji { font-size: 1.3rem; }
+
+    .deck-toggle-name {
+      font-family: var(--f-display);
+      font-size: 0.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* Mode selector */
+    .mode-select-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-option {
+      flex: 1;
+      min-width: 100px;
+      padding: 16px;
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-white);
+      box-shadow: var(--sh-sm);
+      cursor: pointer;
+      text-align: center;
+      transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+      user-select: none;
+    }
+
+    .mode-option.active {
+      background: var(--c-black);
+      color: var(--c-white);
+      transform: translate(-2px,-2px);
+      box-shadow: var(--sh-md);
+    }
+
+    .mode-option-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+    .mode-option-label { font-family: var(--f-display); font-size: 0.85rem; font-weight: 800; display: block; }
+    .mode-option-desc { font-size: 0.72rem; opacity: 0.6; margin-top: 3px; display: block; }
+
+    /* Game screen */
+    .game-screen { display: none; }
+    .game-screen.active { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Score header */
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .game-stats {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      font-family: var(--f-display);
+      font-size: 0.9rem;
+      font-weight: 800;
+      background: var(--c-white);
+      box-shadow: var(--sh-sm);
+    }
+
+    .stat-pill-val { font-size: 1.1rem; }
+
+    /* Timer bar */
+    .timer-section {
+      position: relative;
+    }
+
+    .timer-text {
+      font-family: var(--f-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    /* RF card styles */
+    .rf-main-card {
+      background: var(--c-black);
+      color: var(--c-white);
+      border: 3px solid var(--c-black);
+      border-radius: var(--radius);
+      padding: clamp(32px, 6vw, 52px);
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--sh-xl);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.15s ease;
+    }
+
+    .rf-main-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      transition: background 0.15s;
+    }
+
+    .rf-q-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      opacity: 0.4;
+      margin-bottom: 16px;
+    }
+
+    .rf-q-text {
+      font-family: var(--f-display);
+      font-size: clamp(1.2rem, 4vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.25;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .rf-q-deck {
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.4;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 16px;
+    }
+
+    /* Action buttons */
+    .rf-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .rf-btn-gotit {
+      background: var(--c-mint);
+      color: var(--c-black);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: 20px;
+      font-family: var(--f-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--sh-md);
+      transition: transform var(--t-fast), box-shadow var(--t-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .rf-btn-gotit:hover {
+      transform: translate(-3px,-3px);
+      box-shadow: var(--sh-lg);
+    }
+
+    .rf-btn-gotit:active {
+      transform: translate(3px,3px);
+      box-shadow: none;
+    }
+
+    .rf-btn-skip {
+      background: var(--c-cream);
+      color: var(--c-black);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: 20px;
+      font-family: var(--f-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--sh-md);
+      transition: transform var(--t-fast), box-shadow var(--t-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .rf-btn-skip:hover {
+      transform: translate(-3px,-3px);
+      box-shadow: var(--sh-lg);
+    }
+
+    .rf-btn-skip:active {
+      transform: translate(3px,3px);
+      box-shadow: none;
+    }
+
+    .rf-btn-sub { font-size: 0.72rem; opacity: 0.55; font-weight: 600; font-family: var(--f-body); }
+
+    /* Countdown overlay */
+    .countdown-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--c-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+    }
+
+    .countdown-num {
+      font-family: var(--f-display);
+      font-size: clamp(6rem, 20vw, 12rem);
+      font-weight: 800;
+      color: var(--c-yellow);
+    }
+
+    /* Result screen */
+    .result-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .result-screen.active { display: flex; }
+
+    .result-grade {
+      font-size: 5rem;
+      line-height: 1;
+      animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .result-title {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+    }
+
+    .result-score-card {
+      background: var(--c-yellow);
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      padding: 28px 40px;
+      box-shadow: var(--sh-xl);
+      width: min(400px, 100%);
+    }
+
+    .result-score-num {
+      font-family: var(--f-display);
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .result-score-lbl {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.55;
+    }
+
+    .result-stats-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    /* Progress indicator during game */
+    .rf-progress {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .rf-progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--c-black);
+      transition: background var(--t-fast);
+    }
+
+    .rf-progress-dot.done-ok { background: var(--c-mint); }
+    .rf-progress-dot.done-skip { background: var(--c-coral); opacity: 0.5; }
+    .rf-progress-dot.current { background: var(--c-yellow); animation: pulse 0.8s infinite; }
+    .rf-progress-dot.pending { background: transparent; }
+
+    /* Keyboard hint */
+    .kbd-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      opacity: 0.45;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="../index.html" class="nav-logo" aria-label="WRNS Work Edition Home">
+      <span>WRNS</span>
+      <span class="logo-badge"><span class="badge-full">Work Edition</span><span class="badge-short">WE</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="quest.html">Quest</a></li>
+      <li><a href="daily.html">Daily</a></li>
+      <li><a href="rapid-fire.html" class="active">Rapid Fire</a></li>
+      <li><a href="wisdom.html">Wisdom</a></li>
+    </ul>
+    <button class="nav-sound-btn" id="soundToggle" aria-label="Toggle sound">🔊</button>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="../index.html">🏠 Home</a>
+  <a href="quest.html">🃏 Quest Decks</a>
+  <a href="daily.html">☀️ Daily Oracle</a>
+  <a href="rapid-fire.html">⚡ Rapid Fire</a>
+  <a href="wisdom.html">📖 Wisdom Vault</a>
+</div>
+
+<main class="page">
+  <div class="container section rf-page">
+    <div class="page-enter">
+      <a href="../index.html" class="back-link" id="backLink">← Back</a>
+      <h1 style="margin-top: 16px; font-size: clamp(1.8rem,4vw,3rem);">⚡ Rapid Fire</h1>
+      <p style="opacity: 0.6; margin-top: 6px;">Speed through questions. Got It or Skip. Score yourself.</p>
+    </div>
+
+    <!-- SETUP SCREEN -->
+    <div class="setup-screen section" id="setupScreen">
+
+      <div>
+        <div class="setup-section-label">Game Mode</div>
+        <div class="mode-select-row">
+          <div class="mode-option active" data-mode="timer" tabindex="0" role="radio" aria-checked="true">
+            <span class="mode-option-icon">⏱️</span>
+            <span class="mode-option-label">Timed</span>
+            <span class="mode-option-desc">60-second clock</span>
+          </div>
+          <div class="mode-option" data-mode="free" tabindex="0" role="radio" aria-checked="false">
+            <span class="mode-option-icon">♾️</span>
+            <span class="mode-option-label">Free Play</span>
+            <span class="mode-option-desc">No timer</span>
+          </div>
+          <div class="mode-option" data-mode="sprint" tabindex="0" role="radio" aria-checked="false">
+            <span class="mode-option-icon">🏃</span>
+            <span class="mode-option-label">Sprint</span>
+            <span class="mode-option-desc">15 questions</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="setup-section-label">Select Decks (or leave all for full shuffle)</div>
+        <div class="deck-select-grid" id="deckSelectGrid">
+          <!-- Populated by JS -->
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+          <button class="btn btn-black btn-sm" id="selectAllBtn">Select All</button>
+          <button class="btn btn-ghost btn-sm" id="clearAllBtn" style="border: var(--border);">Clear All</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="setup-section-label">Questions ready</div>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div style="font-family: var(--f-display); font-size: 2rem; font-weight: 800;" id="qReadyCount">240</div>
+          <div style="opacity: 0.5; font-size: 0.85rem;">questions in selected decks</div>
+        </div>
+      </div>
+
+      <button class="btn btn-yellow btn-lg" id="startBtn" style="align-self: flex-start; font-size: 1.2rem;">
+        🚀 Start Rapid Fire!
+      </button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div class="game-screen" id="gameScreen">
+      <div class="game-header">
+        <div class="game-stats">
+          <div class="stat-pill">✅ <span class="stat-pill-val" id="gotItCount">0</span></div>
+          <div class="stat-pill">⏭️ <span class="stat-pill-val" id="skipCount">0</span></div>
+          <div class="stat-pill">❓ <span class="stat-pill-val" id="remainCount">—</span></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="quitBtn" style="border: var(--border);">✕ Quit</button>
+      </div>
+
+      <div class="timer-section" id="timerSection">
+        <div class="timer-text" id="timerText" aria-live="polite">0:00</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="timerFill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <div class="rf-main-card" id="rfCard">
+        <div>
+          <div class="rf-q-num" id="rfQNum">Question 1</div>
+          <div class="rf-q-text" id="rfQText">Get ready…</div>
+        </div>
+        <div class="rf-q-deck" id="rfQDeck"></div>
+      </div>
+
+      <div class="rf-btn-row">
+        <button class="rf-btn-gotit" id="gotItBtn" aria-label="Got it">
+          <span style="font-size: 1.5rem;">✅</span>
+          <span>Got It!</span>
+          <span class="rf-btn-sub">+10 pts · Space or →</span>
+        </button>
+        <button class="rf-btn-skip" id="skipBtn" aria-label="Skip">
+          <span style="font-size: 1.5rem;">⏭️</span>
+          <span>Skip</span>
+          <span class="rf-btn-sub">S or ↓</span>
+        </button>
+      </div>
+
+      <div class="rf-progress" id="rfProgress" aria-hidden="true"></div>
+      <div class="kbd-row">
+        <span class="kbd">Space</span> or <span class="kbd">→</span> Got It &nbsp;|&nbsp; <span class="kbd">S</span> or <span class="kbd">↓</span> Skip
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="result-screen" id="resultScreen" aria-live="polite">
+      <div class="result-grade" id="resultGrade">🏆</div>
+      <div class="result-title" id="resultTitle">Legend</div>
+      <div class="result-score-card score-reveal">
+        <div class="result-score-num" id="resultScore">0</div>
+        <div class="result-score-lbl">Points</div>
+      </div>
+      <div class="result-stats-row">
+        <div class="rf-stat">
+          <div class="rf-stat-val" id="resultGotIt">0</div>
+          <div class="rf-stat-lbl">Got It ✅</div>
+        </div>
+        <div class="rf-stat">
+          <div class="rf-stat-val" id="resultSkipped">0</div>
+          <div class="rf-stat-lbl">Skipped ⏭️</div>
+        </div>
+        <div class="rf-stat">
+          <div class="rf-stat-val" id="resultTime">—</div>
+          <div class="rf-stat-lbl">Time</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <button class="btn btn-yellow btn-lg" id="playAgainBtn">🔁 Play Again</button>
+        <button class="btn btn-black btn-lg" id="newSetupBtn">⚙️ Change Setup</button>
+        <a href="quest.html" class="btn btn-ghost" style="border: var(--border);">🃏 Browse Decks</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/sounds.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Sounds.init();
+  const soundOn = localStorage.getItem('wrns_sound') !== 'false';
+  Sounds.setEnabled(soundOn);
+  document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+  document.getElementById('soundToggle').addEventListener('click', function() {
+    const on = localStorage.getItem('wrns_sound') !== 'false';
+    const next = !on;
+    localStorage.setItem('wrns_sound', next);
+    Sounds.setEnabled(next);
+    this.textContent = next ? '🔊' : '🔇';
+    if (next) Sounds.playClick();
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+    mobileMenu.classList.toggle('open', open);
+  });
+
+  // ── State ─────────────────────────────────────────────────────
+  let selectedDecks = new Set(DECKS.map(d => d.id)); // all selected by default
+  let gameMode = 'timer';
+  let gameQuestions = [];
+  let currentIdx = 0;
+  let gotItCount = 0;
+  let skipCount = 0;
+  let startTime = 0;
+  let timerInterval = null;
+  let gameRunning = false;
+  const TIMER_LIMIT = 60; // seconds for timed mode
+  const SPRINT_LIMIT = 15;
+
+  // ── Build deck toggles ────────────────────────────────────────
+  const grid = document.getElementById('deckSelectGrid');
+  DECKS.forEach(deck => {
+    const btn = document.createElement('button');
+    btn.className = 'deck-toggle selected';
+    btn.dataset.id = deck.id;
+    btn.style.borderColor = deck.color;
+    btn.style.setProperty('--deck-color', deck.color);
+    btn.innerHTML = `<span class="deck-toggle-emoji">${deck.emoji}</span><span class="deck-toggle-name">${deck.title}</span>`;
+    btn.style.background = deck.color + '22';
+
+    btn.addEventListener('click', () => {
+      if (selectedDecks.has(deck.id)) {
+        selectedDecks.delete(deck.id);
+        btn.classList.remove('selected');
+        btn.style.background = '#ffffff';
+      } else {
+        selectedDecks.add(deck.id);
+        btn.classList.add('selected');
+        btn.style.background = deck.color + '22';
+      }
+      Sounds.playClick();
+      updateQCount();
+    });
+
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('selectAllBtn').addEventListener('click', () => {
+    DECKS.forEach(d => selectedDecks.add(d.id));
+    grid.querySelectorAll('.deck-toggle').forEach((btn, i) => {
+      btn.classList.add('selected');
+      btn.style.background = DECKS[i].color + '22';
+    });
+    updateQCount();
+    Sounds.playClick();
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', () => {
+    selectedDecks.clear();
+    grid.querySelectorAll('.deck-toggle').forEach(btn => {
+      btn.classList.remove('selected');
+      btn.style.background = '#ffffff';
+    });
+    updateQCount();
+    Sounds.playClick();
+  });
+
+  function updateQCount() {
+    const count = DECKS.filter(d => selectedDecks.has(d.id))
+      .reduce((acc, d) => acc + d.questions.length, 0);
+    document.getElementById('qReadyCount').textContent = count;
+  }
+
+  // ── Mode selector ─────────────────────────────────────────────
+  document.querySelectorAll('.mode-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.mode-option').forEach(o => {
+        o.classList.remove('active');
+        o.setAttribute('aria-checked', 'false');
+      });
+      opt.classList.add('active');
+      opt.setAttribute('aria-checked', 'true');
+      gameMode = opt.dataset.mode;
+      Sounds.playClick();
+    });
+
+    opt.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); }
+    });
+  });
+
+  // ── Start ─────────────────────────────────────────────────────
+  document.getElementById('startBtn').addEventListener('click', startGame);
+
+  function startGame() {
+    if (selectedDecks.size === 0) {
+      showToast('⚠️ Select at least one deck!');
+      return;
+    }
+
+    const pool = DECKS
+      .filter(d => selectedDecks.has(d.id))
+      .flatMap(d => d.questions.map(q => ({ q, deck: d.title, deckId: d.id, color: d.color })));
+
+    gameQuestions = Engine.seededShuffle(pool, Engine.getHourSeed() + Date.now());
+
+    if (gameMode === 'sprint') gameQuestions = gameQuestions.slice(0, SPRINT_LIMIT);
+
+    currentIdx = 0;
+    gotItCount = 0;
+    skipCount = 0;
+    startTime = Date.now();
+
+    // Countdown 3-2-1 then show game
+    showCountdown(() => {
+      document.getElementById('setupScreen').style.display = 'none';
+      document.getElementById('resultScreen').classList.remove('active');
+      document.getElementById('gameScreen').classList.add('active');
+
+      buildProgress();
+      showQuestion();
+      startTimer();
+      gameRunning = true;
+    });
+  }
+
+  function showCountdown(cb) {
+    const overlay = document.createElement('div');
+    overlay.className = 'countdown-overlay';
+    const numEl = document.createElement('div');
+    numEl.className = 'countdown-num count-pop';
+    overlay.appendChild(numEl);
+    document.body.appendChild(overlay);
+
+    let n = 3;
+    numEl.textContent = n;
+    Sounds.playTick();
+
+    const iv = setInterval(() => {
+      n--;
+      numEl.classList.remove('count-pop');
+      void numEl.offsetWidth; // reflow
+      numEl.classList.add('count-pop');
+      if (n > 0) { numEl.textContent = n; Sounds.playTick(); }
+      else if (n === 0) { numEl.textContent = 'GO!'; numEl.style.color = '#00D97E'; Sounds.playTock(); }
+      else {
+        clearInterval(iv);
+        document.body.removeChild(overlay);
+        cb();
+      }
+    }, 800);
+  }
+
+  function buildProgress() {
+    const wrap = document.getElementById('rfProgress');
+    wrap.innerHTML = '';
+    gameQuestions.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = `rf-progress-dot ${i === 0 ? 'current' : 'pending'}`;
+      dot.id = `pdot-${i}`;
+      wrap.appendChild(dot);
+    });
+  }
+
+  function updateProgress(idx, type) {
+    const prev = document.getElementById(`pdot-${idx}`);
+    if (prev) prev.className = `rf-progress-dot done-${type}`;
+    const next = document.getElementById(`pdot-${idx + 1}`);
+    if (next) next.className = 'rf-progress-dot current';
+  }
+
+  function showQuestion() {
+    if (currentIdx >= gameQuestions.length) { endGame(); return; }
+
+    const q = gameQuestions[currentIdx];
+    const deck = DECKS.find(d => d.id === q.deckId);
+
+    document.getElementById('rfQNum').textContent = `Question ${currentIdx + 1} of ${gameQuestions.length}`;
+    document.getElementById('rfQText').textContent = q.q;
+    document.getElementById('rfQDeck').textContent = `${deck ? deck.emoji : '🃏'} ${q.deck}`;
+
+    // Color accent
+    const card = document.getElementById('rfCard');
+    card.style.setProperty('--card-color', q.color);
+    card.style.borderColor = q.color;
+
+    // Update counts
+    document.getElementById('gotItCount').textContent = gotItCount;
+    document.getElementById('skipCount').textContent = skipCount;
+    document.getElementById('remainCount').textContent = gameQuestions.length - currentIdx - 1;
+
+    // Card flash
+    card.classList.add('flip-in');
+    card.addEventListener('animationend', () => card.classList.remove('flip-in'), { once: true });
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    const timerSection = document.getElementById('timerSection');
+    const timerText = document.getElementById('timerText');
+    const timerFill = document.getElementById('timerFill');
+
+    if (gameMode === 'free' || gameMode === 'sprint') {
+      // Count up, no limit
+      timerSection.style.display = 'block';
+      timerFill.style.background = 'var(--c-mint)';
+      timerFill.style.width = '100%';
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const s = String(elapsed % 60).padStart(2, '0');
+        timerText.textContent = `${m}:${s}`;
+      }, 1000);
+    } else {
+      // Timed: count down from 60
+      timerSection.style.display = 'block';
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = Math.max(0, TIMER_LIMIT - elapsed);
+        const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const s = String(remaining % 60).padStart(2, '0');
+        timerText.textContent = `${m}:${s}`;
+        timerFill.style.width = `${(remaining / TIMER_LIMIT) * 100}%`;
+
+        if (remaining <= 10) {
+          timerFill.style.background = 'var(--c-coral)';
+          if (remaining > 0) Sounds.playTick();
+        }
+
+        if (remaining === 0) { endGame(); }
+      }, 1000);
+    }
+  }
+
+  function answer(type) {
+    if (!gameRunning) return;
+    updateProgress(currentIdx, type === 'got' ? 'ok' : 'skip');
+    if (type === 'got') {
+      gotItCount++;
+      Sounds.playFlip();
+    } else {
+      skipCount++;
+      Sounds.playSkip();
+    }
+    currentIdx++;
+    if (currentIdx >= gameQuestions.length) endGame();
+    else showQuestion();
+  }
+
+  document.getElementById('gotItBtn').addEventListener('click', () => answer('got'));
+  document.getElementById('skipBtn').addEventListener('click', () => answer('skip'));
+  document.getElementById('quitBtn').addEventListener('click', endGame);
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (!gameRunning) return;
+    if (e.key === ' ' || e.key === 'ArrowRight') { e.preventDefault(); answer('got'); }
+    if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') { e.preventDefault(); answer('skip'); }
+  });
+
+  function endGame() {
+    if (!gameRunning && currentIdx === 0) return;
+    gameRunning = false;
+    clearInterval(timerInterval);
+
+    const elapsed = Date.now() - startTime;
+    const score = Engine.calcRapidScore(gotItCount, skipCount, elapsed);
+    const grade = Engine.getRapidGrade(score);
+
+    document.getElementById('gameScreen').classList.remove('active');
+    document.getElementById('resultScreen').classList.add('active');
+
+    document.getElementById('resultGrade').textContent = grade.emoji;
+    document.getElementById('resultTitle').textContent = grade.label;
+    document.getElementById('resultScore').textContent = score;
+    document.getElementById('resultGotIt').textContent = gotItCount;
+    document.getElementById('resultSkipped').textContent = skipCount;
+    const sec = Math.floor(elapsed / 1000);
+    document.getElementById('resultTime').textContent = `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+
+    Sounds.playComplete();
+    showToast(`${grade.emoji} ${grade.label}! Score: ${score}`);
+  }
+
+  document.getElementById('playAgainBtn').addEventListener('click', () => {
+    document.getElementById('resultScreen').classList.remove('active');
+    startGame();
+  });
+
+  document.getElementById('newSetupBtn').addEventListener('click', () => {
+    document.getElementById('resultScreen').classList.remove('active');
+    document.getElementById('setupScreen').style.display = 'flex';
+  });
+
+  document.getElementById('backLink').addEventListener('click', (e) => {
+    if (gameRunning) {
+      e.preventDefault();
+      if (confirm('Quit the current game?')) {
+        window.location.href = '../index.html';
+      }
+    }
+  });
+});
+
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), dur);
+}
+</script>
+</body>
+</html>

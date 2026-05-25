@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quest Decks — WRNS Work Edition</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <style>
+    .quest-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .quest-layout { grid-template-columns: 1fr; }
+      .deck-panel { position: static !important; }
+    }
+
+    .deck-panel {
+      position: sticky;
+      top: 80px;
+    }
+
+    .deck-panel-inner {
+      border: var(--border-thick);
+      border-radius: var(--radius);
+      background: var(--c-white);
+      box-shadow: var(--sh-md);
+      overflow: hidden;
+    }
+
+    .deck-panel-header {
+      padding: 20px 22px 16px;
+      border-bottom: var(--border);
+      background: var(--c-black);
+      color: var(--c-white);
+    }
+
+    .deck-panel-header h3 {
+      font-size: 1rem;
+      color: var(--c-yellow);
+      margin-bottom: 4px;
+    }
+
+    .deck-panel-header p {
+      font-size: 0.8rem;
+      opacity: 0.5;
+    }
+
+    .deck-list {
+      overflow-y: auto;
+      max-height: calc(100dvh - 220px);
+      scrollbar-width: thin;
+    }
+
+    .deck-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1.5px solid var(--c-cream);
+      cursor: pointer;
+      transition: background var(--t-fast), transform var(--t-fast);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .deck-item:last-child { border-bottom: none; }
+
+    .deck-item:hover { background: var(--c-cream); }
+
+    .deck-item.active {
+      background: var(--c-yellow);
+      border-left: 4px solid var(--c-black);
+    }
+
+    .deck-item-emoji { font-size: 1.5rem; }
+
+    .deck-item-info { flex: 1; min-width: 0; }
+
+    .deck-item-title {
+      font-family: var(--f-display);
+      font-size: 0.9rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .deck-item-count {
+      font-size: 0.75rem;
+      opacity: 0.5;
+      font-weight: 600;
+    }
+
+    .deck-item-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--c-black);
+      flex-shrink: 0;
+    }
+
+    /* Card area */
+    .card-area {
+      min-height: 600px;
+    }
+
+    .card-area-empty {
+      height: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px dashed rgba(10,10,10,0.2);
+      border-radius: var(--radius);
+      gap: 16px;
+      color: rgba(10,10,10,0.35);
+    }
+
+    .card-area-empty .empty-emoji { font-size: 4rem; }
+
+    .card-area-empty h3 { font-size: 1.3rem; }
+
+    .card-area-empty p { font-size: 0.9rem; }
+
+    /* Active deck header */
+    .active-deck-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      border: var(--border-thick);
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom: none;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .active-deck-title-wrap { display: flex; align-items: center; gap: 12px; }
+
+    .active-deck-emoji { font-size: 2rem; }
+
+    .active-deck-meta h3 { font-size: 1.1rem; line-height: 1.2; }
+    .active-deck-meta p { font-size: 0.8rem; opacity: 0.55; margin-top: 2px; }
+
+    .active-deck-actions { display: flex; align-items: center; gap: 10px; }
+
+    /* Question card in carousel */
+    .q-card-render {
+      background: var(--c-white);
+      border: var(--border-thick);
+      border-radius: 0 0 var(--radius) var(--radius);
+      border-top: var(--border);
+      padding: 32px 36px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .q-card-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+    }
+
+    .q-card-number {
+      font-family: var(--f-display);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.4;
+      margin-bottom: 20px;
+    }
+
+    .q-card-text {
+      font-family: var(--f-display);
+      font-size: clamp(1.3rem, 3.5vw, 2rem);
+      font-weight: 800;
+      line-height: 1.25;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .q-card-bottom {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .q-deck-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--sh-sm);
+    }
+
+    .q-hint {
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.4;
+    }
+
+    /* Realm badge */
+    .realm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--f-display);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border: var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--c-cream);
+      box-shadow: var(--sh-sm);
+    }
+
+    /* Big decorative number bg */
+    .q-bg-num {
+      position: absolute;
+      right: -10px;
+      bottom: -20px;
+      font-family: var(--f-display);
+      font-size: 12rem;
+      font-weight: 800;
+      opacity: 0.04;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+
+    /* Hourly refresh notice */
+    .refresh-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--c-cream);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Keyboard hint */
+    .kbd-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      opacity: 0.45;
+      font-weight: 600;
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px;
+      border: 1.5px solid rgba(10,10,10,0.2);
+      border-radius: 4px;
+      background: var(--c-cream);
+      font-size: 0.7rem;
+      font-family: monospace;
+    }
+
+    @media (max-width: 768px) {
+      .kbd-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="../index.html" class="nav-logo" aria-label="WRNS Work Edition Home">
+      <span>WRNS</span>
+      <span class="logo-badge"><span class="badge-full">Work Edition</span><span class="badge-short">WE</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="quest.html" class="active">Quest</a></li>
+      <li><a href="daily.html">Daily</a></li>
+      <li><a href="rapid-fire.html">Rapid Fire</a></li>
+      <li><a href="wisdom.html">Wisdom</a></li>
+    </ul>
+    <button class="nav-sound-btn" id="soundToggle" aria-label="Toggle sound">🔊</button>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="../index.html">🏠 Home</a>
+  <a href="quest.html">🃏 Quest Decks</a>
+  <a href="daily.html">☀️ Daily Oracle</a>
+  <a href="rapid-fire.html">⚡ Rapid Fire</a>
+  <a href="wisdom.html">📖 Wisdom Vault</a>
+</div>
+
+<main class="page">
+  <div class="container section">
+
+    <!-- Page header -->
+    <div class="section-header page-enter">
+      <div>
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1 style="margin-top: 16px; font-size: clamp(1.8rem, 4vw, 3rem);">🃏 Quest Decks</h1>
+        <p style="opacity: 0.6; margin-top: 6px; font-size: 0.95rem;">12 realms · 240 questions · Shuffled every hour</p>
+      </div>
+      <div class="flex gap-sm" style="flex-wrap: wrap; align-items: center;">
+        <div class="refresh-notice">
+          <span class="dot" style="width:8px;height:8px;background:var(--c-mint);border-radius:50%;flex-shrink:0;animation:pulse 1.5s infinite;"></span>
+          <span id="hourRefresh">Deck shuffles in —</span>
+        </div>
+        <span class="kbd-hint">
+          <span class="kbd">←</span> <span class="kbd">→</span> arrow keys
+        </span>
+      </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="quest-layout">
+
+      <!-- Deck panel -->
+      <aside class="deck-panel" aria-label="Deck selector">
+        <div class="deck-panel-inner">
+          <div class="deck-panel-header">
+            <h3>Choose a Realm</h3>
+            <p>Select a deck to begin your quest</p>
+          </div>
+          <div class="deck-list" id="deckList" role="listbox" aria-label="Question decks">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Card area -->
+      <section class="card-area" aria-live="polite" aria-label="Question cards">
+        <div id="cardArea">
+          <div class="card-area-empty" id="emptyState">
+            <span class="empty-emoji float-a">🃏</span>
+            <h3>Pick a Realm to Begin</h3>
+            <p>Select a question deck from the left panel</p>
+            <div class="flex gap-sm" style="flex-wrap: wrap; justify-content: center; margin-top: 8px;">
+              <span class="badge" style="background: var(--c-yellow);">🌱 Surface Lands</span>
+              <span class="badge" style="background: var(--c-coral); color: white;">🔥 Hot Seat</span>
+              <span class="badge" style="background: var(--c-blue); color: white;">🔍 Honest Heights</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/sounds.js"></script>
+<script src="../js/carousel.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Sounds.init();
+  const soundOn = localStorage.getItem('wrns_sound') !== 'false';
+  Sounds.setEnabled(soundOn);
+  document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+
+  // Sound toggle
+  document.getElementById('soundToggle').addEventListener('click', function() {
+    const on = localStorage.getItem('wrns_sound') !== 'false';
+    const next = !on;
+    localStorage.setItem('wrns_sound', next);
+    Sounds.setEnabled(next);
+    this.textContent = next ? '🔊' : '🔇';
+    if (next) Sounds.playClick();
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+    mobileMenu.classList.toggle('open', open);
+  });
+
+  // Hour countdown
+  function updateHourCountdown() {
+    const ms = Engine.msToNextHour();
+    const m = String(Math.floor(ms / 60000)).padStart(2, '0');
+    const s = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+    document.getElementById('hourRefresh').textContent = `Shuffles in ${m}:${s}`;
+  }
+  updateHourCountdown();
+  setInterval(updateHourCountdown, 1000);
+
+  // Build deck list
+  let currentDeckId = null;
+  let carousel = null;
+
+  const deckList = document.getElementById('deckList');
+  DECKS.forEach(deck => {
+    const item = document.createElement('div');
+    item.className = 'deck-item';
+    item.setAttribute('role', 'option');
+    item.setAttribute('tabindex', '0');
+    item.dataset.id = deck.id;
+    item.innerHTML = `
+      <span class="deck-item-emoji">${deck.emoji}</span>
+      <div class="deck-item-info">
+        <div class="deck-item-title">${deck.title}</div>
+        <div class="deck-item-count">${deck.questions.length} questions</div>
+      </div>
+      <div class="deck-item-dot" style="background: ${deck.color};"></div>
+    `;
+
+    item.addEventListener('click', () => selectDeck(deck.id));
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDeck(deck.id); }
+    });
+
+    deckList.appendChild(item);
+  });
+
+  function selectDeck(deckId) {
+    if (currentDeckId === deckId) return;
+    Sounds.playLevelUp();
+
+    currentDeckId = deckId;
+    const deck = DECKS.find(d => d.id === deckId);
+
+    // Update list selection
+    document.querySelectorAll('.deck-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.id === deckId);
+    });
+
+    // Get hourly-shuffled questions
+    const questions = Engine.getHourlyDeck(deckId);
+
+    // Render card area
+    renderDeckView(deck, questions);
+  }
+
+  function renderDeckView(deck, questions) {
+    const area = document.getElementById('cardArea');
+
+    // Destroy old carousel
+    if (carousel) { carousel.destroy(); carousel = null; }
+
+    // Header
+    const headerHTML = `
+      <div class="active-deck-header" style="background: ${deck.color}; border-color: var(--c-black);">
+        <div class="active-deck-title-wrap">
+          <span class="active-deck-emoji">${deck.emoji}</span>
+          <div class="active-deck-meta">
+            <h3>${deck.title} — ${deck.subtitle}</h3>
+            <p>${deck.desc} &nbsp;|&nbsp; 📍 ${deck.realm}</p>
+          </div>
+        </div>
+        <div class="active-deck-actions">
+          <span class="realm-badge">🗺️ ${deck.realm}</span>
+          <button class="btn btn-black btn-sm" id="reshuffleBtn">🔀 Reshuffle</button>
+        </div>
+      </div>
+    `;
+
+    // Carousel container
+    const carouselEl = document.createElement('div');
+    carouselEl.id = 'deckCarousel';
+
+    area.innerHTML = headerHTML;
+    area.appendChild(carouselEl);
+
+    // Create carousel
+    carousel = new Carousel(carouselEl, questions, {
+      deckColor: deck.color,
+      deckTitle: deck.title,
+      renderCard: (q, idx, total) => renderQuestionCard(q, idx, total, deck)
+    });
+    carousel.enableSwipe();
+
+    // Reshuffle
+    document.getElementById('reshuffleBtn').addEventListener('click', () => {
+      Sounds.playReveal();
+      const fresh = Engine.seededShuffle(deck.questions, Engine.getHourSeed() + Date.now());
+      carousel.shuffle(fresh);
+      showToast('🔀 Reshuffled!');
+    });
+
+    showToast(`${deck.emoji} ${deck.title} loaded!`);
+  }
+
+  function renderQuestionCard(q, idx, total, deck) {
+    const el = document.createElement('div');
+    el.className = 'q-card-render';
+
+    el.innerHTML = `
+      <div class="q-card-accent" style="background: ${deck.color};"></div>
+      <div class="q-card-number">Question ${idx + 1} of ${total}</div>
+      <div class="q-card-text">${q}</div>
+      <div class="q-card-bottom">
+        <span class="q-deck-badge" style="background: ${deck.color};">
+          ${deck.emoji} ${deck.title}
+        </span>
+        <span class="q-hint">💭 Take your time. Breathe first.</span>
+      </div>
+      <div class="q-bg-num" aria-hidden="true">${idx + 1}</div>
+    `;
+
+    // Subtle hover 3D
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const dx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+      const dy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+      el.style.transform = `perspective(800px) rotateY(${dx * 3}deg) rotateX(${-dy * 3}deg)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+
+    return el;
+  }
+
+  // Pre-select first deck for UX
+  function checkUrlParam() {
+    const params = new URLSearchParams(window.location.search);
+    const deckId = params.get('deck');
+    if (deckId && DECKS.find(d => d.id === deckId)) {
+      selectDeck(deckId);
+    }
+  }
+  checkUrlParam();
+});
+
+function showToast(msg, dur = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), dur);
+}
+</script>
+</body>
+</html>
