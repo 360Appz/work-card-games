@@ -15,7 +15,7 @@
     .date-display {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
@@ -24,44 +24,44 @@
       align-items: center;
       gap: 8px;
       font-family: var(--f-display);
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 800;
-      padding: 10px 20px;
-      border: var(--border-thick);
+      padding: 9px 18px;
       border-radius: var(--radius-pill);
       background: var(--c-black);
       color: var(--c-white);
-      box-shadow: var(--sh-md);
+      box-shadow: var(--sh-sm);
     }
 
     /* Countdown to next day */
     .next-oracle {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px 20px;
+      gap: 10px;
+      padding: 9px 16px;
       border: var(--border);
       border-radius: var(--radius-pill);
-      background: var(--c-cream);
+      background: var(--c-surface);
       box-shadow: var(--sh-sm);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 600;
+      color: var(--c-muted);
       flex-wrap: wrap;
     }
 
     .next-oracle-time {
       font-family: var(--f-display);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
+      color: var(--c-black);
     }
 
     /* Daily Q card */
     .daily-q-card {
       background: var(--c-black);
       color: var(--c-white);
-      border: var(--border-thick);
       border-radius: var(--radius);
-      padding: clamp(32px, 5vw, 56px);
+      padding: clamp(28px, 5vw, 52px);
       position: relative;
       overflow: hidden;
       box-shadow: var(--sh-xl);
@@ -75,16 +75,16 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 80% 20%, rgba(255,229,0,0.08) 0%, transparent 60%);
+      background: radial-gradient(ellipse at 80% 20%, rgba(255,204,41,0.08) 0%, transparent 60%);
       pointer-events: none;
     }
 
     .daily-q-label {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-family: var(--f-display);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -94,8 +94,8 @@
     }
 
     .daily-q-label .live-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background: var(--c-yellow);
       border-radius: 50%;
       animation: pulse 1.5s infinite;
@@ -127,24 +127,24 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 14px;
-      border: 2px solid rgba(255,255,255,0.2);
+      padding: 5px 12px;
+      border: 1.5px solid rgba(255,255,255,0.15);
       border-radius: var(--radius-pill);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.6);
     }
 
     .daily-q-share {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 16px;
-      border: 2px solid rgba(255,255,255,0.2);
+      padding: 7px 14px;
+      border: 1.5px solid rgba(255,255,255,0.15);
       border-radius: var(--radius-pill);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.6);
       cursor: pointer;
       transition: border-color var(--t-fast), color var(--t-fast);
       background: none;
@@ -164,7 +164,7 @@
       font-size: clamp(8rem, 20vw, 14rem);
       font-weight: 800;
       color: white;
-      opacity: 0.04;
+      opacity: 0.03;
       line-height: 1;
       pointer-events: none;
       user-select: none;
@@ -172,14 +172,13 @@
 
     /* Quote card */
     .quote-block {
-      background: var(--c-yellow);
-      border: var(--border-thick);
+      background: rgba(255,204,41,0.15);
+      border: 1px solid rgba(255,204,41,0.3);
       border-radius: var(--radius);
-      padding: clamp(28px, 4vw, 48px);
-      box-shadow: var(--sh-lg);
+      padding: clamp(24px, 4vw, 44px);
       position: relative;
       overflow: hidden;
-      min-height: 200px;
+      min-height: 180px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -187,23 +186,25 @@
 
     .quote-marks {
       font-family: serif;
-      font-size: 5rem;
+      font-size: 4rem;
       line-height: 0.7;
-      opacity: 0.12;
+      opacity: 0.2;
       margin-bottom: 8px;
       display: block;
+      color: var(--c-black);
     }
 
     .quote-text {
       font-family: var(--f-display);
-      font-size: clamp(1.1rem, 2.8vw, 1.7rem);
+      font-size: clamp(1.1rem, 2.8vw, 1.65rem);
       font-weight: 800;
       line-height: 1.3;
       flex: 1;
+      color: var(--c-black);
     }
 
     .quote-footer {
-      margin-top: 20px;
+      margin-top: 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -215,80 +216,20 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 12px;
-      border: var(--border);
+      padding: 4px 12px;
       border-radius: var(--radius-pill);
-      background: var(--c-white);
-      font-size: 0.78rem;
+      background: rgba(255,204,41,0.3);
+      font-size: 0.76rem;
       font-weight: 700;
-      box-shadow: var(--sh-sm);
     }
 
-    .quote-src {
-      font-size: 0.78rem;
-      font-weight: 600;
-      opacity: 0.55;
-    }
-
-    /* Complete the sentence card */
-    .sentence-card {
-      border: var(--border-thick);
-      border-radius: var(--radius);
-      background: var(--c-white);
-      box-shadow: var(--sh-lg);
-      overflow: hidden;
-    }
-
-    .sentence-header {
-      background: var(--c-purple);
-      color: var(--c-white);
-      padding: 18px 28px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sentence-header h3 {
-      font-size: 0.95rem;
-      font-weight: 800;
-    }
-
-    .sentence-body {
-      padding: 28px;
-    }
-
-    .sentence-prompt {
-      font-family: var(--f-display);
-      font-size: clamp(1.2rem, 3vw, 1.8rem);
-      font-weight: 800;
-      line-height: 1.25;
-      margin-bottom: 20px;
-    }
-
-    .sentence-input {
-      width: 100%;
-      min-height: 100px;
-      padding: 14px 18px;
-      font-family: var(--f-body);
-      font-size: 1rem;
-      border: var(--border-thick);
-      border-radius: var(--radius-sm);
-      background: var(--c-cream);
-      resize: vertical;
-      transition: border-color var(--t-fast), box-shadow var(--t-fast);
-      outline: none;
-    }
-
-    .sentence-input:focus {
-      border-color: var(--c-purple);
-      box-shadow: 0 0 0 3px rgba(112,0,255,0.12);
-    }
+    .quote-src { font-size: 0.76rem; font-weight: 600; color: var(--c-muted); }
 
     /* Daily stats row */
     .daily-meta-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
     }
 
     .daily-meta-card {
@@ -296,63 +237,36 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 16px;
-      border: var(--border-thick);
+      padding: 18px 14px;
+      border: var(--border);
       border-radius: var(--radius);
-      background: var(--c-white);
-      box-shadow: var(--sh-md);
+      background: var(--c-surface);
+      box-shadow: var(--sh-sm);
       text-align: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .daily-meta-val {
       font-family: var(--f-display);
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 800;
     }
 
     .daily-meta-lbl {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      opacity: 0.5;
+      color: var(--c-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
 
-    /* Day streak visual */
-    .streak-bar {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .streak-day {
-      width: 28px;
-      height: 28px;
-      border: var(--border);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    .streak-day.today {
-      background: var(--c-yellow);
-      box-shadow: var(--sh-sm);
-      font-size: 0.8rem;
-    }
-
-    .streak-day.visited { background: var(--c-mint); }
-
-    /* Reflection area */
+    /* Rapid fire preview container */
     .reflection-section {
-      border: var(--border-thick);
+      border: var(--border);
       border-radius: var(--radius);
-      background: var(--c-cream);
-      padding: 28px;
-      box-shadow: var(--sh-md);
+      background: var(--c-surface);
+      padding: 24px;
+      box-shadow: var(--sh-sm);
     }
 
     /* Section labels */
@@ -361,7 +275,7 @@
       align-items: center;
       gap: 10px;
       font-family: var(--f-display);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 800;
       margin-bottom: 16px;
     }
@@ -370,12 +284,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       background: var(--c-black);
       color: var(--c-white);
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 800;
       flex-shrink: 0;
     }
@@ -476,47 +390,23 @@
       <div class="section-label">
         <span class="num">2</span>
         <span>Quote of the Day</span>
-        <span class="badge" style="background: var(--c-yellow);">📖 Wisdom Playbook</span>
+        <span class="badge" style="background: rgba(255,204,41,0.2); color: var(--c-black);">📖 Wisdom Playbook</span>
       </div>
       <div class="quote-block">
         <span class="quote-marks">"</span>
         <div class="quote-text" id="dailyQuoteText">Loading…</div>
         <div class="quote-footer">
           <span class="quote-tag-pill">🏷️ <span id="dailyQuoteTag">—</span></span>
-          <button class="btn btn-ghost btn-sm" id="shareQuoteBtn" style="border: var(--border);" aria-label="Copy quote">📋 Copy Quote</button>
+          <button class="btn btn-ghost btn-sm" id="shareQuoteBtn" aria-label="Copy quote">📋 Copy Quote</button>
         </div>
       </div>
     </div>
 
-    <!-- 3. Complete the Sentence challenge -->
-    <div style="margin-bottom: 32px;" class="page-enter">
-      <div class="section-label">
-        <span class="num">3</span>
-        <span>Daily Challenge</span>
-        <span class="badge" style="background: var(--c-purple); color: white;">✏️ Complete The Sentence</span>
-      </div>
-      <div class="sentence-card">
-        <div class="sentence-header">
-          <span style="font-size: 1.3rem;">✏️</span>
-          <h3>Complete The Sentence — Today's Prompt</h3>
-        </div>
-        <div class="sentence-body">
-          <div class="sentence-prompt" id="dailySentence">Loading…</div>
-          <label for="sentenceAnswer" class="sr-only">Your answer</label>
-          <textarea class="sentence-input" id="sentenceAnswer" placeholder="Type your answer here — no pressure, no wrong answers…" rows="4"></textarea>
-          <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
-            <button class="btn btn-purple btn-sm" id="saveSentenceBtn">💾 Save Response</button>
-            <button class="btn btn-ghost btn-sm" id="clearSentenceBtn" style="border: var(--border);">🗑️ Clear</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Bonus: Rapid fire preview -->
+    <!-- 3. Bonus: Rapid fire preview -->
     <div class="reflection-section page-enter" style="margin-bottom: 32px;">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
         <div class="section-label" style="margin-bottom: 0;">
-          <span class="num">4</span>
+          <span class="num">3</span>
           <span>Today's Rapid Fire Taste</span>
         </div>
         <a href="rapid-fire.html" class="btn btn-black btn-sm">⚡ Full Mode →</a>
@@ -526,9 +416,9 @@
       </div>
     </div>
 
-    <!-- 5. Navigate to more -->
+    <!-- 4. Navigate to more -->
     <div class="grid-2 stagger" style="margin-bottom: 48px; gap: var(--gap);">
-      <a href="quest.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit;">
+      <a href="quest.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit; --mode-color: var(--c-yellow);">
         <div class="mode-card-bg" style="background: var(--c-yellow);"></div>
         <span class="mode-card-emoji" style="font-size: 2rem;">🃏</span>
         <div class="mode-card-content">
@@ -537,7 +427,7 @@
         </div>
         <span class="mode-card-arrow" style="bottom: 20px; right: 20px;">→</span>
       </a>
-      <a href="wisdom.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit;">
+      <a href="wisdom.html" class="mode-card" style="height: 160px; text-decoration: none; color: inherit; --mode-color: var(--c-purple);">
         <div class="mode-card-bg" style="background: var(--c-purple);"></div>
         <span class="mode-card-emoji" style="font-size: 2rem;">📖</span>
         <div class="mode-card-content">
@@ -619,30 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('wisdomRead').textContent =
     `${Engine.getReadCount()}/${WISDOM_SECTIONS.length}`;
 
-  // Daily sentence
-  document.getElementById('dailySentence').textContent = Engine.getDailySentence();
-
-  // Restore saved sentence
-  const savedKey = `wrns_daily_sentence_${Engine.getDaySeed()}`;
-  const saved = localStorage.getItem(savedKey);
-  if (saved) document.getElementById('sentenceAnswer').value = saved;
-
-  document.getElementById('saveSentenceBtn').addEventListener('click', () => {
-    const val = document.getElementById('sentenceAnswer').value.trim();
-    if (val) {
-      localStorage.setItem(savedKey, val);
-      Sounds.playComplete();
-      showToast('💾 Response saved!');
-    }
-  });
-
-  document.getElementById('clearSentenceBtn').addEventListener('click', () => {
-    document.getElementById('sentenceAnswer').value = '';
-    localStorage.removeItem(savedKey);
-    Sounds.playClick();
-    showToast('🗑️ Cleared');
-  });
-
   // Share / copy
   document.getElementById('shareQBtn').addEventListener('click', () => {
     navigator.clipboard.writeText(dq.q).then(() => {
@@ -667,22 +533,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.createElement('div');
       const deck = DECKS.find(d => d.id === item.deckId);
       el.style.cssText = `
-        background: var(--c-white);
-        border: 2.5px solid var(--c-black);
+        background: var(--c-black);
         border-radius: 16px;
         padding: 28px 32px;
         min-height: 200px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 5px 5px 0 var(--c-black);
+        box-shadow: var(--sh-lg);
         position: relative;
         overflow: hidden;
+        color: white;
       `;
       el.innerHTML = `
-        <div style="height: 4px; background: ${item.color}; position: absolute; top: 0; left: 0; right: 0; border-radius: 16px 16px 0 0;"></div>
+        <div style="height: 3px; background: ${item.color}; position: absolute; top: 0; left: 0; right: 0; border-radius: 16px 16px 0 0;"></div>
         <div style="font-family: var(--f-display); font-size: clamp(1.1rem,3vw,1.5rem); font-weight: 800; line-height: 1.3; padding-top: 8px;">${item.q}</div>
-        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1.5px solid var(--c-black); border-radius: 999px; font-size: 0.78rem; font-weight: 700; background: ${item.color}; margin-top: 16px; box-shadow: 2px 2px 0 var(--c-black); align-self: flex-start;">
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); margin-top: 16px; align-self: flex-start; color: rgba(255,255,255,0.7);">
           ${deck ? deck.emoji : '🃏'} ${item.deck}
         </div>
       `;

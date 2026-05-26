@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/animations.css">
   <style>
+    /* ── Hero ────────────────────────────────────────────────── */
     .landing-hero {
       min-height: calc(100dvh - 64px);
       display: flex;
@@ -18,23 +19,20 @@
       overflow: hidden;
     }
 
-    .hero-blobs {
+    .hero-blobs { display: none; }
+    .blob { display: none; }
+
+    /* Subtle mesh background */
+    .landing-hero::before {
+      content: '';
       position: absolute;
       inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 40%, rgba(255,204,41,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(79,114,245,0.07) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
     }
-
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-    }
-
-    .blob-1 { width: 500px; height: 500px; background: var(--c-yellow); opacity: 0.35; top: -100px; right: -100px; }
-    .blob-2 { width: 350px; height: 350px; background: var(--c-coral); opacity: 0.2; bottom: 0; left: -80px; }
-    .blob-3 { width: 300px; height: 300px; background: var(--c-blue); opacity: 0.12; top: 50%; right: 20%; }
 
     .hero-content { position: relative; z-index: 1; }
 
@@ -42,18 +40,19 @@
 
     .title-outline {
       font-family: var(--f-display);
-      font-size: clamp(3rem, 8vw, 7rem);
+      font-size: clamp(2.8rem, 7.5vw, 6.5rem);
       font-weight: 800;
-      -webkit-text-stroke: 3px var(--c-black);
+      -webkit-text-stroke: 2px var(--c-black);
       color: transparent;
       line-height: 1;
       letter-spacing: -0.03em;
       display: block;
+      opacity: 0.3;
     }
 
     .title-fill {
       font-family: var(--f-display);
-      font-size: clamp(3rem, 8vw, 7rem);
+      font-size: clamp(2.8rem, 7.5vw, 6.5rem);
       font-weight: 800;
       color: var(--c-black);
       line-height: 1;
@@ -63,51 +62,47 @@
 
     .title-badge-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
       flex-wrap: wrap;
-      margin: 20px 0;
+      margin: 18px 0;
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       font-family: var(--f-display);
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      padding: 6px 14px;
-      border: var(--border);
+      padding: 5px 12px;
       border-radius: var(--radius-pill);
-      box-shadow: var(--sh-sm);
+      border: var(--border);
     }
 
-    .pill-y { background: var(--c-yellow); }
-    .pill-c { background: var(--c-coral); color: #fff; }
-    .pill-b { background: var(--c-blue); color: #fff; }
-    .pill-m { background: var(--c-mint); }
+    .pill-y { background: rgba(255,204,41,0.18); color: var(--c-black); }
+    .pill-c { background: rgba(255,97,84,0.1); color: var(--c-coral); }
+    .pill-b { background: rgba(79,114,245,0.1); color: var(--c-blue); }
+    .pill-m { background: rgba(13,200,138,0.12); color: #0a9e6e; }
 
     .rule-box {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      background: var(--c-black);
-      color: var(--c-white);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin: 32px 0;
+      background: rgba(28,28,26,0.04);
       border: var(--border);
-      box-shadow: var(--sh-md);
-      max-width: 640px;
+      border-left: 3px solid var(--c-yellow);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 28px 0;
+      max-width: 620px;
     }
 
-    .rule-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
-
-    .rule-text { font-size: 0.95rem; line-height: 1.6; }
-
-    .rule-text strong { color: var(--c-yellow); }
+    .rule-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .rule-text { font-size: 0.9rem; line-height: 1.6; color: var(--c-muted); }
+    .rule-text strong { color: var(--c-black); }
 
     /* Decorative cards */
     .deco-cards {
@@ -124,138 +119,136 @@
     }
 
     .deco-card {
-      width: 200px;
-      height: 140px;
-      border: var(--border-thick);
+      width: 196px;
+      height: 136px;
+      border: var(--border);
       border-radius: var(--radius);
       box-shadow: var(--sh-lg);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px;
+      padding: 16px;
       position: absolute;
       font-family: var(--f-display);
       font-weight: 800;
+      backdrop-filter: blur(4px);
     }
 
     .deco-card-1 {
-      background: var(--c-yellow);
+      background: rgba(255,204,41,0.92);
       top: -80px; left: 0;
-      transform: rotate(-6deg);
+      transform: rotate(-5deg);
     }
 
     .deco-card-2 {
-      background: var(--c-white);
+      background: rgba(255,255,255,0.95);
       top: 20px; left: 40px;
       transform: rotate(3deg);
     }
 
     .deco-card-3 {
-      background: var(--c-coral);
+      background: rgba(255,97,84,0.9);
       color: white;
       top: 110px; left: -20px;
       transform: rotate(-2deg);
     }
 
-    .deco-q { font-size: 0.8rem; line-height: 1.3; opacity: 0.8; }
-    .deco-lv { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; }
+    .deco-q { font-size: 0.78rem; line-height: 1.3; opacity: 0.85; }
+    .deco-lv { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.55; }
 
-    /* Mode cards section */
-    .modes-section {
-      padding: 64px 0;
-    }
+    /* ── Modes section ─────────────────────────────────────── */
+    .modes-section { padding: 32px 0; }
 
-    /* Stats bar */
+    /* ── Stats bar ─────────────────────────────────────────── */
     .stats-bar {
       display: flex;
       gap: var(--gap);
       flex-wrap: wrap;
-      margin: 40px 0;
+      margin: 32px 0;
     }
 
     .stat-item {
       flex: 1;
-      min-width: 140px;
+      min-width: 130px;
       display: flex;
       flex-direction: column;
-      padding: 20px 24px;
-      border: var(--border-thick);
+      padding: 18px 20px;
+      border: var(--border);
       border-radius: var(--radius);
-      background: var(--c-white);
-      box-shadow: var(--sh-md);
+      background: var(--c-surface);
+      box-shadow: var(--sh-sm);
     }
 
     .stat-val {
       font-family: var(--f-display);
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 800;
       line-height: 1;
     }
 
     .stat-label {
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       font-weight: 600;
-      opacity: 0.5;
+      color: var(--c-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
+    /* ── How to play ───────────────────────────────────────── */
     .how-to-section {
       background: var(--c-black);
       color: var(--c-white);
       border-radius: var(--radius);
-      border: var(--border-thick);
-      padding: 48px;
-      margin: 48px 0;
+      padding: clamp(28px, 4vw, 48px);
+      margin: 20px 0;
     }
 
     .how-to-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 28px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
     }
 
     .how-to-item {
-      background: rgba(255,255,255,0.06);
-      border: 1.5px solid rgba(255,255,255,0.15);
-      border-radius: var(--radius);
-      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 18px;
     }
 
     .how-to-label {
       font-family: var(--f-display);
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      opacity: 0.5;
-      margin-bottom: 8px;
+      color: rgba(255,204,41,0.7);
+      margin-bottom: 6px;
     }
 
-    .how-to-value {
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
+    .how-to-value { font-size: 0.85rem; line-height: 1.5; color: rgba(255,255,255,0.8); }
 
     .how-to-note {
-      margin-top: 24px;
-      padding: 16px 20px;
-      background: rgba(255,229,0,0.1);
-      border: 1px solid rgba(255,229,0,0.3);
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-left: 3px solid rgba(255,204,41,0.5);
       border-radius: var(--radius-sm);
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       line-height: 1.6;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.7);
     }
 
+    /* ── Footer ────────────────────────────────────────────── */
     .footer {
       border-top: var(--border);
-      padding: 32px 0;
+      padding: 28px 0;
       text-align: center;
-      font-size: 0.85rem;
-      opacity: 0.5;
+      font-size: 0.82rem;
+      color: var(--c-muted);
     }
   </style>
 </head>
@@ -300,12 +293,12 @@
       <div class="blob blob-3 float-c"></div>
     </div>
 
-    <div class="container hero-content">
+      <div class="container hero-content">
       <div class="flex" style="gap: 40px; align-items: center;">
         <div style="flex: 1; min-width: 0;">
-          <span class="hero-eyebrow anim-hero-badge">🃏 Interactive · Gamified · Adventure</span>
+          <span class="hero-eyebrow anim-hero-badge">Interactive · Gamified · Work-Friendly</span>
 
-          <div class="title-stack anim-hero-title" style="margin: 12px 0;">
+          <div class="title-stack anim-hero-title" style="margin: 16px 0;">
             <span class="title-outline">We're Not</span>
             <span class="title-fill">Really Strangers</span>
             <div class="title-badge-row">
@@ -330,7 +323,7 @@
           <div class="flex gap-md anim-hero-cta" style="flex-wrap: wrap;">
             <a href="pages/quest.html" class="btn btn-yellow btn-lg">🃏 Start Quest</a>
             <a href="pages/daily.html" class="btn btn-black btn-lg">☀️ Daily Oracle</a>
-            <a href="pages/rapid-fire.html" class="btn btn-coral btn-lg">⚡ Rapid Fire</a>
+            <a href="pages/rapid-fire.html" class="btn btn-ghost btn-lg">⚡ Rapid Fire</a>
           </div>
         </div>
 
@@ -427,58 +420,14 @@
         <h2 class="section-title">Choose Your Mode</h2>
         <span class="hour-badge"><span class="dot"></span> Shuffled hourly</span>
       </div>
-      <div class="mode-grid stagger">
-        <a href="pages/quest.html" class="mode-card" style="--mode-color: var(--c-yellow);">
-          <div class="mode-card-bg" style="background: var(--c-yellow);"></div>
-          <span class="mode-card-emoji">🃏</span>
-          <div class="mode-card-content">
-            <span class="mode-card-badge" style="background: var(--c-yellow);">12 Decks · 240 Qs</span>
-            <div class="mode-card-title">Quest Decks</div>
-            <div class="mode-card-desc">Browse all question decks by level and theme. Deep dive, one card at a time.</div>
-          </div>
-          <span class="mode-card-arrow">→</span>
-        </a>
-
-        <a href="pages/daily.html" class="mode-card" style="--mode-color: var(--c-coral);">
-          <div class="mode-card-bg" style="background: var(--c-coral);"></div>
-          <span class="mode-card-emoji">☀️</span>
-          <div class="mode-card-content">
-            <span class="mode-card-badge" style="background: var(--c-coral); color: white;">Fresh Every Day</span>
-            <div class="mode-card-title">Daily Oracle</div>
-            <div class="mode-card-desc">Your daily question, quote, and challenge — seeded to today's date. New every midnight.</div>
-          </div>
-          <span class="mode-card-arrow">→</span>
-        </a>
-
-        <a href="pages/rapid-fire.html" class="mode-card" style="--mode-color: var(--c-blue);">
-          <div class="mode-card-bg" style="background: var(--c-blue);"></div>
-          <span class="mode-card-emoji">⚡</span>
-          <div class="mode-card-content">
-            <span class="mode-card-badge" style="background: var(--c-blue); color: white;">Timed · Scored</span>
-            <div class="mode-card-title">Rapid Fire</div>
-            <div class="mode-card-desc">Speed through questions. Got It or Skip. Race against time. Get your score.</div>
-          </div>
-          <span class="mode-card-arrow">→</span>
-        </a>
-
-        <a href="pages/wisdom.html" class="mode-card" style="--mode-color: var(--c-purple);">
-          <div class="mode-card-bg" style="background: var(--c-purple);"></div>
-          <span class="mode-card-emoji">📖</span>
-          <div class="mode-card-content">
-            <span class="mode-card-badge" style="background: var(--c-purple); color: white;">63 Scrolls</span>
-            <div class="mode-card-title">Wisdom Vault</div>
-            <div class="mode-card-desc">The complete Work Wisdom Playbook. Every insight, tactic, and truth — all 63 sections.</div>
-          </div>
-          <span class="mode-card-arrow">→</span>
-        </a>
-      </div>
+      <div id="mode-carousel" class="mode-carousel"></div>
     </div>
   </section>
 
   <!-- HOW TO PLAY -->
   <section class="section" aria-label="How to play guide">
     <div class="container">
-      <div class="how-to-section">
+        <div class="how-to-section">
         <h2>Best Way To Play</h2>
         <div class="how-to-grid stagger">
           <div class="how-to-item">
@@ -502,6 +451,10 @@
           Avoid using the deepest questions with people who do not feel psychologically safe. Work games should build trust, not force vulnerability.
         </p>
       </div>
+        <p class="how-to-note">
+          Avoid using the deepest questions with people who do not feel psychologically safe. Work games should build trust, not force vulnerability.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -518,10 +471,122 @@
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/sounds.js"></script>
+<script src="js/carousel.js"></script>
 <script>
   // ── Init ─────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     Sounds.init();
+
+    // Initialize mode carousel
+    const modeData = [
+      {
+        href: 'pages/quest.html',
+        color: 'var(--c-yellow)',
+        bgColor: 'var(--c-yellow)',
+        emoji: '🃏',
+        badge: '12 Decks · 240 Qs',
+        badgeStyle: 'background: rgba(255,204,41,0.15); color: var(--c-black);',
+        title: 'Quest Decks',
+        desc: 'Browse all question decks by level and theme. Deep dive, one card at a time.'
+      },
+      {
+        href: 'pages/daily.html',
+        color: 'var(--c-coral)',
+        bgColor: 'var(--c-coral)',
+        emoji: '☀️',
+        badge: 'Fresh Every Day',
+        badgeStyle: 'background: rgba(255,97,84,0.1); color: var(--c-coral);',
+        title: 'Daily Oracle',
+        desc: 'Your daily question and quote — seeded to today\'s date. New every midnight.'
+      },
+      {
+        href: 'pages/rapid-fire.html',
+        color: 'var(--c-blue)',
+        bgColor: 'var(--c-blue)',
+        emoji: '⚡',
+        badge: 'Timed · Scored',
+        badgeStyle: 'background: rgba(79,114,245,0.1); color: var(--c-blue);',
+        title: 'Rapid Fire',
+        desc: 'Speed through questions. Got It or Skip. Race against time. Get your score.'
+      },
+      {
+        href: 'pages/wisdom.html',
+        color: 'var(--c-purple)',
+        bgColor: 'var(--c-purple)',
+        emoji: '📖',
+        badge: '63 Scrolls',
+        badgeStyle: 'background: rgba(123,92,245,0.1); color: var(--c-purple);',
+        title: 'Wisdom Vault',
+        desc: 'The complete Work Wisdom Playbook. Every insight, tactic, and truth — all 63 sections.'
+      }
+    ];
+
+    const modeCarouselRoot = document.getElementById('mode-carousel');
+    const modeCarousel = new Carousel(modeCarouselRoot, modeData, {
+      renderCard: (item) => {
+        const card = document.createElement('a');
+        card.href = item.href;
+        card.className = 'mode-card';
+        card.style.setProperty('--mode-color', item.color);
+        card.innerHTML = `
+          <div class="mode-card-bg" style="background: ${item.bgColor};"></div>
+          <span class="mode-card-emoji">${item.emoji}</span>
+          <div class="mode-card-content">
+            <span class="mode-card-badge" style="${item.badgeStyle}">${item.badge}</span>
+            <div class="mode-card-title">${item.title}</div>
+            <div class="mode-card-desc">${item.desc}</div>
+          </div>
+        `;
+        return card;
+      },
+      onFlip: (idx, item) => {
+        Sounds.playWhoosh();
+        // Apply 3D tilt to new card
+        const newCard = modeCarouselRoot.querySelector('.mode-card');
+        if (newCard) {
+          newCard.addEventListener('mousemove', (e) => {
+            const rect = newCard.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = (e.clientX - cx) / (rect.width / 2);
+            const dy = (e.clientY - cy) / (rect.height / 2);
+            newCard.style.transform = `translate(-4px,-4px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg)`;
+          });
+          newCard.addEventListener('mouseleave', () => {
+            newCard.style.transform = '';
+          });
+          // Click sound
+          newCard.addEventListener('click', () => Sounds.playLevelUp());
+        }
+      }
+    });
+
+    // Apply 3D tilt to initial card
+    const initialCard = modeCarouselRoot.querySelector('.mode-card');
+    if (initialCard) {
+      initialCard.addEventListener('mousemove', (e) => {
+        const rect = initialCard.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / (rect.width / 2);
+        const dy = (e.clientY - cy) / (rect.height / 2);
+        initialCard.style.transform = `translate(-4px,-4px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg)`;
+      });
+      initialCard.addEventListener('mouseleave', () => {
+        initialCard.style.transform = '';
+      });
+      // Click sound
+      initialCard.addEventListener('click', () => Sounds.playLevelUp());
+    }
+
+    // Enable swipe/drag for mode carousel
+    modeCarousel.enableSwipe();
+
+    // Hide carousel counter (no dots)
+    const modeCounter = modeCarouselRoot.querySelector('.carousel-counter');
+    if (modeCounter) {
+      modeCounter.style.display = 'none';
+    }
 
     // Sound toggle
     let soundOn = localStorage.getItem('wrns_sound') !== 'false';
@@ -564,8 +629,8 @@
     document.getElementById('statReadCount').textContent =
       `${Engine.getReadCount()}/${WISDOM_SECTIONS.length}`;
 
-    // 3D card tilt
-    document.querySelectorAll('.mode-card, .deck-card').forEach(card => {
+    // 3D card tilt (for deck cards only - mode cards handled in carousel)
+    document.querySelectorAll('.deck-card').forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
@@ -584,11 +649,6 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
-
-    // Click sounds on mode cards
-    document.querySelectorAll('.mode-card').forEach(card => {
-      card.addEventListener('click', () => Sounds.playLevelUp());
-    });
 
     showToast('Welcome back, colleague! 🃏');
   });

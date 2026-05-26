@@ -199,14 +199,14 @@
     .rf-btn-gotit {
       background: var(--c-mint);
       color: var(--c-black);
-      border: var(--border-thick);
+      border: none;
       border-radius: var(--radius);
       padding: 20px;
       font-family: var(--f-display);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: var(--sh-md);
+      box-shadow: var(--sh-sm);
       transition: transform var(--t-fast), box-shadow var(--t-fast);
       display: flex;
       flex-direction: column;
@@ -215,26 +215,26 @@
     }
 
     .rf-btn-gotit:hover {
-      transform: translate(-3px,-3px);
-      box-shadow: var(--sh-lg);
+      transform: translateY(-2px);
+      box-shadow: var(--sh-md);
     }
 
     .rf-btn-gotit:active {
-      transform: translate(3px,3px);
+      transform: translateY(0);
       box-shadow: none;
     }
 
     .rf-btn-skip {
       background: var(--c-cream);
       color: var(--c-black);
-      border: var(--border-thick);
+      border: var(--border);
       border-radius: var(--radius);
       padding: 20px;
       font-family: var(--f-display);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: var(--sh-md);
+      box-shadow: var(--sh-sm);
       transition: transform var(--t-fast), box-shadow var(--t-fast);
       display: flex;
       flex-direction: column;
@@ -243,12 +243,12 @@
     }
 
     .rf-btn-skip:hover {
-      transform: translate(-3px,-3px);
-      box-shadow: var(--sh-lg);
+      transform: translateY(-2px);
+      box-shadow: var(--sh-md);
     }
 
     .rf-btn-skip:active {
-      transform: translate(3px,3px);
+      transform: translateY(0);
       box-shadow: none;
     }
 
@@ -298,10 +298,10 @@
 
     .result-score-card {
       background: var(--c-yellow);
-      border: var(--border-thick);
+      border: var(--border);
       border-radius: var(--radius);
       padding: 28px 40px;
-      box-shadow: var(--sh-xl);
+      box-shadow: var(--sh-lg);
       width: min(400px, 100%);
     }
 
@@ -338,16 +338,16 @@
     }
 
     .rf-progress-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
-      border: 1.5px solid var(--c-black);
+      border: var(--border);
       transition: background var(--t-fast);
     }
 
-    .rf-progress-dot.done-ok { background: var(--c-mint); }
-    .rf-progress-dot.done-skip { background: var(--c-coral); opacity: 0.5; }
-    .rf-progress-dot.current { background: var(--c-yellow); animation: pulse 0.8s infinite; }
+    .rf-progress-dot.done-ok { background: var(--c-mint); border-color: var(--c-mint); }
+    .rf-progress-dot.done-skip { background: rgba(28,28,26,0.1); }
+    .rf-progress-dot.current { background: var(--c-yellow); border-color: var(--c-yellow); animation: pulse 0.8s infinite; }
     .rf-progress-dot.pending { background: transparent; }
 
     /* Keyboard hint */
